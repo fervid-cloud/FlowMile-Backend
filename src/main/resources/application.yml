@@ -1,0 +1,9 @@
+server:
+  port: 3300
+
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+        web: TRACE
