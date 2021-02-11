@@ -9,10 +9,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-@Order(2)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class AuthenticationFilter implements Filter {
 

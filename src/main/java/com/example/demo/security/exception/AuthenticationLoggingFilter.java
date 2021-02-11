@@ -22,9 +22,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 
+/**
+ * In this case, this filter comes at first, but by default if no precedence is given, it goes at the last
+ * i.e Ordered.LOWEST_PRECEDENCE(which has Integer.MAX_VALUE)
+ * Objects that have the same order value will be sorted with arbitrary ordering with respect to other objects
+ * with the same order value
+ */
+
 @Component
 @Slf4j
-@Order(Ordered.LOWEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AuthenticationLoggingFilter implements Filter {
 
 
