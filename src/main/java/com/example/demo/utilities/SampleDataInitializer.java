@@ -75,7 +75,6 @@ public class SampleDataInitializer implements CommandLineRunner {
                 .roleId(roleServicePermissionMapping[0])
                 .serviceId(roleServicePermissionMapping[1])
                 .permissionId(roleServicePermissionMapping[2])
-                .endPointId(-1)
                 .build();
         })
         .collect(Collectors.toList()));

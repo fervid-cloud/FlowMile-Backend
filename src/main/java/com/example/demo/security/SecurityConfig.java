@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.service.UserService;
 import com.example.demo.utilities.AuthenticationLoggingFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -42,12 +42,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationLoggingFilter authenticationLoggingFilter;
 
+    private final JWTManager jwtManager;
+
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    private final UserService userService;
+
     public SecurityConfig(InMemoryDatabase inMemoryDatabase,
         AuthorizationFilter authorizationFilter,
-        AuthenticationLoggingFilter authenticationLoggingFilter) {
+        AuthenticationLoggingFilter authenticationLoggingFilter,
+        JWTManager jwtManager,
+        CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+        UserService userService) {
         this.inMemoryDatabase = inMemoryDatabase;
         this.authorizationFilter = authorizationFilter;
         this.authenticationLoggingFilter = authenticationLoggingFilter;
+        this.jwtManager = jwtManager;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.userService = userService;
     }
 
 
@@ -85,17 +97,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
 //            .formLogin()
 //            .and()
-            .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
                 .anyRequest().authenticated();
-        http.addFilterAfter(authenticationLoggingFilter, BasicAuthenticationFilter.class);
+//        http.addFilterAfter(authenticationLoggingFilter, BasicAuthenticationFilter.class);
 //            http.addFilterBefore(AuthorizationFilter, UsernamePasswordAuthenticationFilter)
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(jwtManager, customAuthenticationEntryPoint, userService);
+        http.addFilterBefore(customAuthenticationFilter, BasicAuthenticationFilter.class);
 
 /*        http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
                 .accessDeniedHandler(accessDeniedHandler());*/
 
-        http.httpBasic();
+//        http.httpBasic();
         http.requestCache().disable();
 
     }

@@ -28,6 +28,4 @@ public class RoleServicePermission {
 
     private Integer permissionId;
 
-    private Integer endPointId;
-
 }

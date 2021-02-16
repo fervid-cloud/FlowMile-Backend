@@ -1,22 +1,21 @@
 package com.example.demo.security;
 
-import java.util.Collection;
-import org.springframework.security.core.GrantedAuthority;
+import java.util.List;
 
 
 public class AccessInfo {
 
-    String roleId;
+    Integer roleId;
 
     String roleName;
 
-    Collection< ? extends GrantedAuthority> grantedAuthorities;
+    List<String> authorities;
 
-    public String getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public AccessInfo setRoleId(String roleId) {
+    public AccessInfo setRoleId(Integer roleId) {
         this.roleId = roleId;
         return this;
     }
@@ -30,22 +29,12 @@ public class AccessInfo {
         return this;
     }
 
-    public Collection<? extends GrantedAuthority> getGrantedAuthorities() {
-        return grantedAuthorities;
+    public List<String> getAuthorities() {
+        return authorities;
     }
 
-    public AccessInfo setGrantedAuthorities(
-        Collection<? extends GrantedAuthority> grantedAuthorities) {
-        this.grantedAuthorities = grantedAuthorities;
+    public AccessInfo setAuthorities(List<String> authorities) {
+        this.authorities = authorities;
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "AccessInfo{" +
-                   "roleId='" + roleId + '\'' +
-                   ", roleName='" + roleName + '\'' +
-                   ", grantedAuthorities=" + grantedAuthorities +
-                   '}';
     }
 }

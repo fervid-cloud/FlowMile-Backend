@@ -32,8 +32,8 @@ public class LoginController {
         if(user == null) {
             throw new AuthenticationException();
         }
-        String generateJWT = jwtManager.generateToken(user);
-        return new ResponseEntity<>(generateJWT, HttpStatus.OK);
+        String generatedJWT = jwtManager.generateToken(user);
+        return new ResponseEntity<>(generatedJWT, HttpStatus.OK);
     }
 
     private User authenticateUser(String username, String password) {

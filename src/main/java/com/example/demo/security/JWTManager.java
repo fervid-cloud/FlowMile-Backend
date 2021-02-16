@@ -8,14 +8,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JWTManager {
 
-    @Value("${jwt_secret}")
-    private String jwtSecret;
+    private String jwtSecret = "testUser";
 
     public  CustomAuthenticationToken verifyToken(String token) {
         try {
