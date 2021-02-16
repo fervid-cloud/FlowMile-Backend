@@ -10,18 +10,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @Table
 @Entity
-public class Role {
+public class RoleServicePermission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer roleServicePermissionId;
+
     private Integer roleId;
 
-    private String roleName;
+    private Integer serviceId;
+
+    private Integer permissionId;
+
+    private Integer endPointId;
+
 }

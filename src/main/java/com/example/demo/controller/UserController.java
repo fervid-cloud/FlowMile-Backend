@@ -7,11 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/test")
 public class UserController {
-
-    @RestController
-    @RequestMapping("/test")
-    public static class DemoController {
 
         @GetMapping("/firstEndPoint")
         public String hello() {
@@ -32,7 +30,4 @@ public class UserController {
                 }
             }, HttpStatus.OK);
         }
-
-
-    }
 }

@@ -81,7 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .mvcMatchers(new String[]{"/test/ping/**", "/h2-console/**"}).permitAll()
+                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/login/**"}).permitAll()
             .and()
 //            .formLogin()
 //            .and()

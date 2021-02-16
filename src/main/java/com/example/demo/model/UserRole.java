@@ -11,17 +11,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @Table
 @Entity
-public class Role {
+public class UserRole {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer userRoleId;
+
+    private Integer userId;
+
     private Integer roleId;
 
-    private String roleName;
 }
