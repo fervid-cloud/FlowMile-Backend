@@ -1,6 +1,6 @@
 package com.example.demo.security;
 
-import com.example.demo.security.exception.Util;
+import com.example.demo.utilities.Util;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,6 +13,10 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+
+/*
+It will automatically be added to filter chain by spring once it has been made component
+ */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Component
 public class AuthenticationFilter implements Filter {
@@ -20,7 +24,6 @@ public class AuthenticationFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override

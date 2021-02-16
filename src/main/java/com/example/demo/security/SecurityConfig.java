@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.utilities.AuthenticationLoggingFilter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,9 +10,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,18 +28,28 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class ProjectConfig extends WebSecurityConfigurerAdapter {
+@Order(4)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final InMemoryDatabase inMemoryDatabase;
+    private final AuthorizationFilter authorizationFilter;
 
-    @Autowired
-    public ProjectConfig(InMemoryDatabase inMemoryDatabase) {
+    private final AuthenticationLoggingFilter authenticationLoggingFilter;
+
+    public SecurityConfig(InMemoryDatabase inMemoryDatabase,
+        AuthorizationFilter authorizationFilter,
+        AuthenticationLoggingFilter authenticationLoggingFilter) {
         this.inMemoryDatabase = inMemoryDatabase;
+        this.authorizationFilter = authorizationFilter;
+        this.authenticationLoggingFilter = authenticationLoggingFilter;
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -70,14 +81,19 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .mvcMatchers("test/ping").permitAll()
+                .mvcMatchers(new String[]{"/test/ping/**", "/h2-console/**"}).permitAll()
             .and()
+//            .formLogin()
+//            .and()
+            .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
                 .anyRequest().authenticated();
+        http.addFilterAfter(authenticationLoggingFilter, BasicAuthenticationFilter.class);
+//            http.addFilterBefore(AuthorizationFilter, UsernamePasswordAuthenticationFilter)
 
-        http.exceptionHandling()
+/*        http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler());
+                .accessDeniedHandler(accessDeniedHandler());*/
 
         http.httpBasic();
         http.requestCache().disable();

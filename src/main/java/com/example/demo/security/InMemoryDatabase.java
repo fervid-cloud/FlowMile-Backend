@@ -80,8 +80,6 @@ public class InMemoryDatabase implements SmartInitializingSingleton {
             };
         };
 
-
-
         showDatabaseDetails();
         printBeans();
 

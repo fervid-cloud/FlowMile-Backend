@@ -1,4 +1,4 @@
-package com.example.demo.security.exception;
+package com.example.demo.utilities;
 
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;

@@ -7,9 +7,9 @@ logging:
       springframework:
         security: TRACE
         web: TRACE
-
-
-
+        
+        
+        
 spring:
   datasource:
     url: jdbc:h2:mem:testdb #usually default db is "testdb". This url has been set for storing database with name "testdb" in memory, database can be stored as a file in system directory also, the metnioned database will be automatically created by Spring Boot Auto Configuration.
@@ -23,7 +23,7 @@ spring:
     hibernate:
       ddl-auto: create
       dialect: org.hibernate.dialect.H2Dialect
-  
+      
   
   h2:
     console:

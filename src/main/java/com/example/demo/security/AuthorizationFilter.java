@@ -1,6 +1,6 @@
 package com.example.demo.security;
 
-import com.example.demo.security.exception.Util;
+import com.example.demo.utilities.Util;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,6 +32,7 @@ public class AuthorizationFilter implements Filter {
         String typeOfRequest = getRequestType(request);
 
         Util.showValueStatus((HttpServletRequest) request, this);
+
         chain.doFilter(request, response);
         System.out.println("response is going");
     }
@@ -53,7 +54,6 @@ public class AuthorizationFilter implements Filter {
             System.out.println("Test url is :----------------------" + testUrl);
             String testUrl2 = httpServletRequest.getServletPath().toString();
             System.out.println("Test2 Url is : ---------------------" + testUrl2);
-
 //            String queryString = ((HttpServletRequest)request).getQueryString();
             System.out.println("Request url is : " + url);
             return url;

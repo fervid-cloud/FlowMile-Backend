@@ -1,4 +1,4 @@
-package com.example.demo.security.exception;
+package com.example.demo.utilities;
 
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
