@@ -5,8 +5,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +20,7 @@ public class JWTManager {
                               .parseClaimsJws(token)
                               .getBody();
 
-            CustomAuthenticationToken customAuthenticationToken = new CustomAuthenticationToken();
+            CustomAuthenticationToken customAuthenticationToken = new CustomAuthenticationToken(null);
             customAuthenticationToken.setUsername(body.getSubject());
             return customAuthenticationToken;
         } catch (JwtException | ClassCastException e) {
@@ -37,8 +35,8 @@ public class JWTManager {
             .setIssuer("tester")
             .setSubject(user.getUsername())
             .setClaims(claims)
-            .setIssuedAt(Date.from(Instant.from(LocalDate.now())))
-            .setExpiration(Date.from(Instant.from(LocalDate.now().plusDays(2))))
+            .setIssuedAt(Date.from(java.time.ZonedDateTime.now().toInstant()))
+            .setExpiration(Date.from(java.time.ZonedDateTime.now().plusDays(2).toInstant()))
             .signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
     }

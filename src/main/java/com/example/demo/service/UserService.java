@@ -16,11 +16,11 @@ public class UserService {
 
     public AccessInfo getAccessInfo(String username) {
         AccessInfo accessInfo = new AccessInfo();
-        if(username == "user1") {
+        if(username.equals("user1@test.com")) {
             accessInfo.setRoleId(2);
             accessInfo.setRoleName("admin");
-            accessInfo.setAuthorities(Arrays.asList(new String[]{"service1-read", "service2-write"}));
-        } else if(username == "user2") {
+            accessInfo.setAuthorities(Arrays.asList(new String[]{"service1-read", "service1-write"}));
+        } else if(username.equals("user2@test.com")) {
             accessInfo.setRoleId(1);
             accessInfo.setRoleName("superadmin");
             accessInfo.setAuthorities(Arrays.asList(new String[]{"service1-read", "service1-write", "service1-edit", "service1-delete"}));

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.LoginResponseDto;
 import com.example.demo.dto.UserLoginDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -7,11 +8,14 @@ import com.example.demo.security.JWTManager;
 import javax.security.sasl.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/")
 public class LoginController {
 
     private final JWTManager jwtManager;
@@ -30,19 +34,18 @@ public class LoginController {
 
         User user = authenticateUser(userLoginDto.getUsername(), userLoginDto.getPassword());
         if(user == null) {
-            throw new AuthenticationException();
+            throw new BadCredentialsException("Invalid username or password");
         }
         String generatedJWT = jwtManager.generateToken(user);
-        return new ResponseEntity<>(generatedJWT, HttpStatus.OK);
+        return new ResponseEntity<>(new LoginResponseDto().setJwtToken(generatedJWT).setUsername(userLoginDto.getUsername()).setMessage("Login Successful"), HttpStatus.OK);
     }
 
     private User authenticateUser(String username, String password) {
         if(username == null || password == null) {
+            System.out.println("userdetail is not correct#############################");
             return null;
         }
-
         User user = userRepository.findByUserName(username);
-        return user != null ? user : null;
+        return user;
     }
-
 }

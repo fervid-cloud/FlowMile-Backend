@@ -3,16 +3,22 @@ package com.example.demo.security;
 
 import java.util.Collection;
 import javax.security.auth.Subject;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-public class CustomAuthenticationToken implements Authentication {
+public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     String username;
 
     String credential;
 
     AccessInfo AccessInfo;
+
+
+    public CustomAuthenticationToken(
+        Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
+    }
 
     public String getUsername() {
         return username;
@@ -22,7 +28,6 @@ public class CustomAuthenticationToken implements Authentication {
         this.username = username;
         return this;
     }
-
 
     public com.example.demo.security.AccessInfo getAccessInfo() {
         return AccessInfo;
@@ -43,18 +48,14 @@ public class CustomAuthenticationToken implements Authentication {
         return this;
     }
 
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+    public boolean implies(Subject subject) {
+        return false;
     }
 
     @Override
     public Object getCredentials() {
-        return null;
-    }
-
-    @Override
-    public Object getDetails() {
         return null;
     }
 
@@ -64,22 +65,11 @@ public class CustomAuthenticationToken implements Authentication {
     }
 
     @Override
-    public boolean isAuthenticated() {
-        return false;
-    }
-
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public boolean implies(Subject subject) {
-        return false;
+    public String toString() {
+        return "CustomAuthenticationToken{" +
+                   "username='" + username + '\'' +
+                   ", credential='" + credential + '\'' +
+                   ", AccessInfo=" + AccessInfo +
+                   '}';
     }
 }

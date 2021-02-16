@@ -33,8 +33,21 @@ public class AccessInfo {
         return authorities;
     }
 
+
     public AccessInfo setAuthorities(List<String> authorities) {
         this.authorities = authorities;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "AccessInfo{" +
+                   "roleId=" + roleId +
+                   ", roleName='" + roleName + '\'' +
+                   ", authorities=" + authorities +
+                   '}';
+    }
+
+
+
 }

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -29,16 +30,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @Order(4)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final InMemoryDatabase inMemoryDatabase;
-    private final AuthorizationFilter authorizationFilter;
 
     private final AuthenticationLoggingFilter authenticationLoggingFilter;
 
@@ -49,13 +50,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserService userService;
 
     public SecurityConfig(InMemoryDatabase inMemoryDatabase,
-        AuthorizationFilter authorizationFilter,
         AuthenticationLoggingFilter authenticationLoggingFilter,
         JWTManager jwtManager,
         CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
         UserService userService) {
         this.inMemoryDatabase = inMemoryDatabase;
-        this.authorizationFilter = authorizationFilter;
         this.authenticationLoggingFilter = authenticationLoggingFilter;
         this.jwtManager = jwtManager;
         this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
@@ -93,22 +92,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/login/**"}).permitAll()
+                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/**/login/**"}).permitAll()
             .and()
-//            .formLogin()
-//            .and()
             .authorizeRequests()
                 .anyRequest().authenticated();
-//        http.addFilterAfter(authenticationLoggingFilter, BasicAuthenticationFilter.class);
-//            http.addFilterBefore(AuthorizationFilter, UsernamePasswordAuthenticationFilter)
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(jwtManager, customAuthenticationEntryPoint, userService);
-        http.addFilterBefore(customAuthenticationFilter, BasicAuthenticationFilter.class);
-
-/*        http.exceptionHandling()
-                .authenticationEntryPoint(authenticationEntryPoint())
-                .accessDeniedHandler(accessDeniedHandler());*/
-
-//        http.httpBasic();
+        http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.requestCache().disable();
 
     }
