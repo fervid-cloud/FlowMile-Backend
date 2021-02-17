@@ -47,7 +47,6 @@ public class JWTManager {
     public String generateToken(User user)  {
         try {
 
-
             ZonedDateTime currentTime = java.time.ZonedDateTime.now();
 
             JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
