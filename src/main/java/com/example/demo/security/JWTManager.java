@@ -1,5 +1,6 @@
 package com.example.demo.security;
 
+import com.example.demo.exception.TokenExpiredException;
 import com.example.demo.model.User;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
@@ -12,6 +13,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java.text.ParseException;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.security.auth.login.CredentialException;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 public class JWTManager {
 
     /***
+     * NEED TO VERIFY BELOW DETAIL
      * The secret length must be at least 256 bits i.e 16(for java) characters otherwise com.nimbusds.jose.KeyLengthException:
      * It depends what is the character and what encoding it is in:
      * An ASCII character in 8-bit ASCII encoding is 8 bits (1 byte), though it can fit in 7 bits.
@@ -56,7 +59,7 @@ public class JWTManager {
                 .expirationTime(Date.from(currentTime.plusDays(2).toInstant()))
                 .claim("useFor", "testing")
                 .notBeforeTime(Date.from(currentTime.toInstant()))
-//                .jwtID(UUID.randomUUID().toString())
+//                .jwtID(UUID.randomUUID().toString())  //useful for stateful management
                 .build();
 
             JWSSigner macSigner = new MACSigner(jwtSecret);
@@ -78,8 +81,6 @@ public class JWTManager {
         }
     }
 
-//    private boolean isExpired()
-
     private JWTClaimsSet verifyToken(final String token) {
 
         try {
@@ -91,6 +92,12 @@ public class JWTManager {
             if(!verificationStatus) {
                 throw new CredentialException();
             }
+
+
+            if(isTokenExpired(signedParsedJWT)) {
+                throw new TokenExpiredException();
+            }
+
             System.out.println("Token verification status is : " + verificationStatus);
             return signedParsedJWT.getJWTClaimsSet();
 
@@ -105,6 +112,12 @@ public class JWTManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private boolean isTokenExpired(SignedJWT signedParsedJWT) throws ParseException {
+        Instant curTime = Instant.now();
+        Instant expiryTime = signedParsedJWT.getJWTClaimsSet().getExpirationTime().toInstant();
+        return curTime.isAfter(expiryTime);
     }
 
 }
