@@ -2,12 +2,13 @@ package com.example.demo.security;
 
 import com.example.demo.service.UserService;
 import java.io.IOException;
+import java.util.stream.Collectors;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -39,25 +40,27 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
                 String authorizationHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
             if (authorizationHeaderValue == null || !authorizationHeaderValue.startsWith(BEARER_PREFIX)) {
-                throw new BadCredentialsException(("Invalid username or password"));
+                filterChain.doFilter(request, response);
+                return;
             }
 
             String jwtToken = authorizationHeaderValue.substring(BEARER_PREFIX.length());
-            CustomAuthenticationToken customAuthenticationToken = jwtManager.verifyToken(jwtToken);
-
-            if(customAuthenticationToken == null) {
-                throw new BadCredentialsException("Invalid username or password");
+            String username = jwtManager.getUsername(jwtToken);
+            System.out.println("username is : " + username);
+            if(username != null) {
+                AccessInfo accessInfo = userService.getAccessInfo(username);
+                System.out.println("User Info is : " + accessInfo);
+                CustomAuthenticationToken customAuthenticationToken = new CustomAuthenticationToken(accessInfo.getAuthorities().stream().map(
+                    SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                customAuthenticationToken.setUsername(username);
+                customAuthenticationToken.setAccessInfo(accessInfo);
+                customAuthenticationToken.setAuthenticated(true);
+                SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
+                System.out.println("USER IS VERIFIED ------------------------------");
+                System.out.println(customAuthenticationToken);
+                System.out.println("------------------------------------------------------------------------");
             }
-
-
-            AccessInfo accessInfo = userService.getAccessInfo(customAuthenticationToken.getUsername());
-            customAuthenticationToken.setAccessInfo(accessInfo);
-            customAuthenticationToken.setAuthenticated(true);
-            SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
-            System.out.println("USER IS VERIFIED ------------------------------");
-            System.out.println(customAuthenticationToken);
-            System.out.println("------------------------------------------------------------------------");
-
+            System.out.println("authentication filter done, going further in chain");
             filterChain.doFilter(request, response);
         }
          catch (AuthenticationException exception) {

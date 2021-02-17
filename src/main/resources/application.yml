@@ -30,3 +30,8 @@ spring:
       enabled: true
       path: /h2-console
       
+      
+      
+mac:
+  jwtSecret: secretKeyForSigningOfJosonWebToken
+  

@@ -34,6 +34,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
                                                              .httpStatus(HttpStatus.UNAUTHORIZED)
                                                              .time(curTime)
                                                              .build();
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         objectMapper.writeValue(response.getWriter(), unAuthenticatedResponse);
     }
 

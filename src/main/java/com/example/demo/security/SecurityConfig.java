@@ -92,14 +92,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/**/login/**"}).permitAll()
+                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/login/**"}).permitAll()
             .and()
             .authorizeRequests()
                 .anyRequest().authenticated();
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(jwtManager, customAuthenticationEntryPoint, userService);
         http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.requestCache().disable();
-
+        http.exceptionHandling().authenticationEntryPoint(
+            customAuthenticationEntryPoint);
     }
 
     /**

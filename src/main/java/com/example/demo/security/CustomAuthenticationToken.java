@@ -2,17 +2,14 @@ package com.example.demo.security;
 
 
 import java.util.Collection;
-import javax.security.auth.Subject;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
-    String username;
+    private String username;
 
-    String credential;
-
-    AccessInfo AccessInfo;
+    private AccessInfo accessInfo = new AccessInfo();
 
 
     public CustomAuthenticationToken(
@@ -29,29 +26,13 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
         return this;
     }
 
-    public com.example.demo.security.AccessInfo getAccessInfo() {
-        return AccessInfo;
+    public AccessInfo getAccessInfo() {
+        return accessInfo;
     }
 
-    public CustomAuthenticationToken setAccessInfo(
-        com.example.demo.security.AccessInfo accessInfo) {
-        AccessInfo = accessInfo;
+    public CustomAuthenticationToken setAccessInfo(AccessInfo accessInfo) {
+        this.accessInfo = accessInfo;
         return this;
-    }
-
-    public String getCredential() {
-        return credential;
-    }
-
-    public CustomAuthenticationToken setCredential(String credential) {
-        this.credential = credential;
-        return this;
-    }
-
-
-    @Override
-    public boolean implies(Subject subject) {
-        return false;
     }
 
     @Override
@@ -61,15 +42,6 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return "CustomAuthenticationToken{" +
-                   "username='" + username + '\'' +
-                   ", credential='" + credential + '\'' +
-                   ", AccessInfo=" + AccessInfo +
-                   '}';
+        return username;
     }
 }

@@ -12,9 +12,15 @@ import com.example.demo.repository.RoleServicePermissionRepository;
 import com.example.demo.repository.ServiceRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.UserRoleRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -35,18 +41,21 @@ public class SampleDataInitializer implements CommandLineRunner {
 
     private final RoleServicePermissionRepository roleServicePermissionRepository;
 
+    private final ObjectMapper objectMapper;
     public SampleDataInitializer(UserRepository userRepository,
         RoleRepository roleRepository,
         ServiceRepository serviceRepository,
         PermissionRepository permissionRepository,
         UserRoleRepository userRoleRepository,
-        RoleServicePermissionRepository roleServicePermissionRepository) {
+        RoleServicePermissionRepository roleServicePermissionRepository,
+        ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.serviceRepository = serviceRepository;
         this.permissionRepository = permissionRepository;
         this.userRoleRepository = userRoleRepository;
         this.roleServicePermissionRepository = roleServicePermissionRepository;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -65,7 +74,9 @@ public class SampleDataInitializer implements CommandLineRunner {
         initializePermissions();
         initializeUserRoles();
         initializeRoleServicePermissions();
+
     }
+
 
     private void initializeRoleServicePermissions() {
         Integer [][] roleServicePermissionMappings = new Integer [][] {{2, 1, 1}, {2, 1, 2}, {1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}};
@@ -137,5 +148,21 @@ public class SampleDataInitializer implements CommandLineRunner {
             .phoneNumber("123456789" + (i - 1))
             .build());
         }
+    }
+
+
+    private void showData() throws JsonProcessingException {
+        String data = "{\"users\":{\"address\":[{\"rue\":\"ruetest\",\"postal\":1111},{\"rue\":\"ruetest\",\"postal\":2222}],\"type\":\"string\",\"user\":[{\"argent\":122,\"id\":1,\"nom\":\"user1\",\"prenom\":\"last1\"},{\"argent\":200,\"id\":2,\"nom\":\"user2\",\"prenom\":\"last2\"},{\"argent\":1205,\"id\":3,\"nom\":\"user3\",\"prenom\":\"last3\"}]}}";
+        JSONObject jsonData = new JSONObject(data);
+        Map<String, Object> mapData = jsonData.toMap();
+        TypeReference<HashMap<String,Object>> typeRef
+            = new TypeReference<HashMap<String,Object>>() {};
+        Map<String, Object> value = objectMapper.readValue(data, typeRef);
+        System.out.println("Map data is : " + mapData);
+        System.out.println("the other data is " + value);
+
+        value.keySet().forEach(System.out:: println);
+        System.out.println("Printing entry set");
+        value.entrySet().forEach(System.out:: println);
     }
 }
