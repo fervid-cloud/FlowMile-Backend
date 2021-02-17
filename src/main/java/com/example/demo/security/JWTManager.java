@@ -55,7 +55,7 @@ public class JWTManager {
                 .subject(user.getUsername())
                 .issueTime(Date.from(currentTime.toInstant()))
                 .expirationTime(Date.from(currentTime.plusDays(2).toInstant()))
-                .claim("userfor", "testing")
+                .claim("useFor", "testing")
                 .notBeforeTime(Date.from(currentTime.toInstant()))
 //                .jwtID(UUID.randomUUID().toString())
                 .build();
@@ -70,7 +70,8 @@ public class JWTManager {
 
             SignedJWT signedJWT = new SignedJWT(jwsHeader, jwtClaimsSet);
             signedJWT.sign(macSigner);
-            return signedJWT.serialize();
+            String accessToken = signedJWT.serialize();
+            return accessToken;
 
         } catch (JOSEException joseException) {
             joseException.printStackTrace();
