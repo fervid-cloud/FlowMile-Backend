@@ -99,8 +99,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(jwtManager, customAuthenticationEntryPoint, userService);
         http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.requestCache().disable();
-        http.exceptionHandling().authenticationEntryPoint(
-            customAuthenticationEntryPoint);
+/*        http.exceptionHandling().authenticationEntryPoint(
+            customAuthenticationEntryPoint);*/
     }
 
     /**
