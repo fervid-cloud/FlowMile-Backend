@@ -21,7 +21,7 @@ public class Service1Controller {
     }
 
     @GetMapping("/read")
-    @PreAuthorize("@authorizationVerifier.isUserAuthorizedForThisService(authentication, 'service1-read')")
+    @PreAuthorize("@authorizationVerifier.isUserAuthorizedForThisService(authentication, 'service1-read', 'service-filter')")
     public ResponseEntity<?> readService() {
         return new ResponseEntity<>("READ Successful for service1", HttpStatus.OK);
     }
