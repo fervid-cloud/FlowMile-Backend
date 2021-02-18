@@ -7,6 +7,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -92,8 +93,29 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         System.out.println("The servlet path is : " + request.getServletPath());
+        return doesRequestMatch(request);
+    }
+
+
+    /***
+     * example of using MVCRequestMatcher
+     * @Test
+     * public void testMatcher() {
+     *     MvcRequestMatcher mvcRequestMatcher = new MvcRequestMatcher(new HandlerMappingIntrospector(), "/users/{id}");
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("GET", "/users/1")));
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("GET", "/users/aaa")));
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("GET", "/users")));
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("POST", "/users/1")));
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("PUT", "/users/1")));
+     *     System.out.println(mvcRequestMatcher.matches(new MockHttpServletRequest("DELETE", "/users/1")));
+     * }
+     * @param request
+     * @return
+     */
+    private boolean doesRequestMatch(HttpServletRequest request) {
         HandlerMappingIntrospector handlerMappingIntrospector = new HandlerMappingIntrospector();
         MvcRequestMatcher mvcRequestMatcher = new MvcRequestMatcher(handlerMappingIntrospector, "/login/**");
+        mvcRequestMatcher.setMethod(HttpMethod.POST);
         return mvcRequestMatcher.matches(request);
     }
 
