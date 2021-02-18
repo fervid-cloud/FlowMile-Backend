@@ -41,7 +41,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
         try {
 
-                String authorizationHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
+            String authorizationHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
             if (authorizationHeaderValue == null || !authorizationHeaderValue.startsWith(BEARER_PREFIX)) {
                 filterChain.doFilter(request, response);
                 return;

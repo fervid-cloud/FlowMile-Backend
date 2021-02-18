@@ -31,7 +31,7 @@ public class ExceptionResponseModel {
 
 
     /***
-     * using builder patter using either lambda expression or anonymous class
+     * for builder pattern use either through lambda expression or anonymous class
      * @param exceptionResponseConsumerAction
      * @return
      */
