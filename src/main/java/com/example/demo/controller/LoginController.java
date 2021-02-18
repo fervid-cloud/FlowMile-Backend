@@ -45,7 +45,11 @@ public class LoginController {
             System.out.println("userdetail is not correct#############################");
             return null;
         }
+
         User user = userRepository.findByUserName(username);
+        if(user == null) {
+            user = User.builder().username(username).password(password).build();
+        }
         return user;
     }
 }

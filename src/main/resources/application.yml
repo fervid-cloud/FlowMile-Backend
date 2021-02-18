@@ -35,3 +35,18 @@ spring:
 mac:
   jwtSecret: secretKeyForSigningOfJosonWebToken
   
+  
+  
+  
+application-description: User Management Apis Documentation
+application-version: 1.0.0
+application-title: UserManagement
+
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  # swagger-ui custom path
+  swagger-ui.path: /swagger-ui.html
+  use-fqn: true
+

@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,25 +16,45 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name = "user")
+@Table
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
     private Integer userId;
 
-    @Column(name = "username")
+    @Column(nullable = false, updatable = true)
     private String username;
 
     private String password;
 
+    @Column(nullable = false, updatable = true)
     private String emailId;
 
     private String phoneNumber;
 
+    @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
+
+    private String profileImageUrl;
+
+    private LocalDateTime lastLoginTime;
+
+    private LocalDateTime lastLoginTimeDisplay;
+
+    private LocalDateTime creationTime;
+
+    private LocalDateTime lastModifiedTime;
+
+    private boolean isAccountLocked;
+
+    private boolean isEnabled;
+
+    private boolean isVerified;
 
 }

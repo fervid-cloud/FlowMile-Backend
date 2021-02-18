@@ -95,6 +95,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/login/**"}).permitAll()
             .and()
             .authorizeRequests()
+                .mvcMatchers(new String [] {"/**/api-docs/**", "/**/swagger-ui/**", "/swagger-ui.html"}).permitAll()
+            .and()
+            .authorizeRequests()
                 .anyRequest().authenticated();
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(jwtManager, customAuthenticationEntryPoint, userService);
         http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

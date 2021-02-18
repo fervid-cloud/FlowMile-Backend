@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
@@ -71,10 +73,28 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     }
 
 
-
     private void onUnSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
         throws IOException {
         customAuthenticationEntryPoint.commence(request, response, exception);
+    }
+
+
+    /**
+     * Note- have added this api for api testing through springdoc-openapi, it is not needed, but
+     * again it teaches how to use MvcRequestMapping if in future it is needed for some use cases
+     *
+     * Can be overridden in subclasses for custom filtering control,
+     * returning {@code true} to avoid filtering of the given request.
+     * <p>The default implementation always returns {@code false}.
+     * @param request current HTTP request
+     * @return whether the given request should <i>not</i> be filtered
+     */
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        System.out.println("The servlet path is : " + request.getServletPath());
+        HandlerMappingIntrospector handlerMappingIntrospector = new HandlerMappingIntrospector();
+        MvcRequestMatcher mvcRequestMatcher = new MvcRequestMatcher(handlerMappingIntrospector, "/login/**");
+        return mvcRequestMatcher.matches(request);
     }
 
 }

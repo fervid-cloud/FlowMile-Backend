@@ -1,5 +1,6 @@
 package com.example.demo.exception;
 
+import java.util.function.Consumer;
 import org.springframework.http.HttpStatus;
 
 public class ExceptionResponseModel {
@@ -12,6 +13,14 @@ public class ExceptionResponseModel {
 
     private final HttpStatus httpStatus;
 
+
+    public ExceptionResponseModel(String error, String message, String time, HttpStatus httpStatus) {
+        this.error = error;
+        this.message = message;
+        this.time = time;
+        this.httpStatus = httpStatus;
+    }
+
     /**
      * TODO find if can we make object of inner static class while keeping it private to the outer world
      * @return
@@ -20,8 +29,22 @@ public class ExceptionResponseModel {
         return new ExceptionResponseModelBuilder();
     }
 
+
+    /***
+     * using builder patter using either lambda expression or anonymous class
+     * @param exceptionResponseConsumerAction
+     * @return
+     */
+    public static ExceptionResponseModel createResponse(
+        Consumer<ExceptionResponseModelBuilder> exceptionResponseConsumerAction) {
+        ExceptionResponseModelBuilder currentBuilder = builder();
+        exceptionResponseConsumerAction.accept(currentBuilder);
+        return currentBuilder.build();
+    }
+
+
     /**
-     * TODO why we are able to access private member of passed object in the parameter
+     * TODO explore more in depth of why we are able to access private member of passed object in the parameter
      * @param exceptionResponseModelBuilder
      */
     public ExceptionResponseModel(ExceptionResponseModelBuilder exceptionResponseModelBuilder) {
