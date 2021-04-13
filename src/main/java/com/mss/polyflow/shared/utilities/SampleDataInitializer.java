@@ -1,17 +1,7 @@
 package com.mss.polyflow.shared.utilities;
 
-import com.mss.polyflow.shared.model.Permission;
-import com.mss.polyflow.shared.model.Role;
-import com.mss.polyflow.shared.model.RoleServicePermission;
-import com.mss.polyflow.shared.model.Service;
 import com.mss.polyflow.shared.model.User;
-import com.mss.polyflow.shared.model.UserRole;
-import com.mss.polyflow.shared.repository.PermissionRepository;
-import com.mss.polyflow.shared.repository.RoleRepository;
-import com.mss.polyflow.shared.repository.RoleServicePermissionRepository;
-import com.mss.polyflow.shared.repository.ServiceRepository;
 import com.mss.polyflow.shared.repository.UserRepository;
-import com.mss.polyflow.shared.repository.UserRoleRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +12,8 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 
@@ -31,30 +23,11 @@ public class SampleDataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
-
-    private final ServiceRepository serviceRepository;
-
-    private final PermissionRepository permissionRepository;
-
-    private final UserRoleRepository userRoleRepository;
-
-    private final RoleServicePermissionRepository roleServicePermissionRepository;
 
     private final ObjectMapper objectMapper;
     public SampleDataInitializer(UserRepository userRepository,
-        RoleRepository roleRepository,
-        ServiceRepository serviceRepository,
-        PermissionRepository permissionRepository,
-        UserRoleRepository userRoleRepository,
-        RoleServicePermissionRepository roleServicePermissionRepository,
         ObjectMapper objectMapper) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.serviceRepository = serviceRepository;
-        this.permissionRepository = permissionRepository;
-        this.userRoleRepository = userRoleRepository;
-        this.roleServicePermissionRepository = roleServicePermissionRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -69,71 +42,9 @@ public class SampleDataInitializer implements CommandLineRunner {
         log.info("end of printing of command line runner");
         log.info("------------------------------------------------");
         initializeUsers();
-        initializeRoles();
-        initializeServices();
-        initializePermissions();
-        initializeUserRoles();
-        initializeRoleServicePermissions();
 
     }
 
-
-    private void initializeRoleServicePermissions() {
-        Integer [][] roleServicePermissionMappings = new Integer [][] {{2, 1, 1}, {2, 1, 2}, {1, 1, 1}, {1, 1, 2}, {1, 1, 3}, {1, 1, 4}};
-        roleServicePermissionRepository.saveAll(Arrays.stream(roleServicePermissionMappings)
-        .map(roleServicePermissionMapping -> {
-            return RoleServicePermission.builder()
-                .roleId(roleServicePermissionMapping[0])
-                .serviceId(roleServicePermissionMapping[1])
-                .permissionId(roleServicePermissionMapping[2])
-                .build();
-        })
-        .collect(Collectors.toList()));
-    }
-
-    private void initializeUserRoles() {
-        Integer [][] userRoleMappings = new Integer[][] { {1, 2}, {2,3}, {10,1} };
-        userRoleRepository.saveAll(Arrays.stream(userRoleMappings).map(userRoleMapping -> {
-            return UserRole.builder()
-                       .userId(userRoleMapping[0])
-                       .roleId(userRoleMapping[1])
-                       .build();
-        })
-        .collect(Collectors.toList()));
-    }
-
-    private void initializePermissions() {
-        String [] samplePermissions = new String [] {"read", "write", "edit", "delete"};
-        permissionRepository.saveAll(Arrays.stream(samplePermissions).map(permissionName -> {
-            return Permission.builder()
-                .permissionName(permissionName)
-                .build();
-        })
-        .collect(Collectors.toList()));
-    }
-
-    private void initializeServices() {
-        String [] sampleServices = new String [] {"service1", "service2", "service3", "service4", "service5"};
-        serviceRepository.saveAll(
-          Arrays.stream(sampleServices).map(serviceName -> {
-              return Service.builder()
-                  .serviceName(serviceName)
-                  .build();
-          })
-          .collect(Collectors.toList()));
-    }
-
-    private void initializeRoles() {
-        String [] sampleRoles = new String [] {"superadmin", "admin", "level3", "level2", "level1"};
-        int n = sampleRoles.length;
-        roleRepository.saveAll(Arrays.stream(sampleRoles).map(roleName -> {
-            return Role.builder()
-                .roleName(roleName)
-                .build();
-        })
-        .collect(Collectors.toList()));
-
-    }
 
     private void initializeUsers() {
         int n = 10;
@@ -149,7 +60,6 @@ public class SampleDataInitializer implements CommandLineRunner {
             .build());
         }
     }
-
 
     private void showData() throws JsonProcessingException {
         String data = "{\"users\":{\"address\":[{\"rue\":\"ruetest\",\"postal\":1111},{\"rue\":\"ruetest\",\"postal\":2222}],\"type\":\"string\",\"user\":[{\"argent\":122,\"id\":1,\"nom\":\"user1\",\"prenom\":\"last1\"},{\"argent\":200,\"id\":2,\"nom\":\"user2\",\"prenom\":\"last2\"},{\"argent\":1205,\"id\":3,\"nom\":\"user3\",\"prenom\":\"last3\"}]}}";

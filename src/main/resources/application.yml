@@ -6,25 +6,80 @@ logging:
     org:
       springframework:
         security: TRACE
-        web: TRACE
+#        web: TRACE
 
 
-
+##data_sources
 spring:
+  application:
+    name: school-service
+    profiles:
+      active: test
   datasource:
-    url: jdbc:h2:mem:testdb
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:mysql://localhost:3306/polyflow_management? createDatabaseIfNotExist=true&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  #jpa
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    show-sql: true
-  
     hibernate:
-      ddl-auto: create
-      dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialet: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+          
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 3600000
+      idle-timeout: 600000
+      minimum-idle: 5
+    dbcp2:
+      time-between-eviction-runs-millis: 3600000
+    tomcat:
+      test-on-borrow: true
+      test-while-idle: true
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+      enabled: true
   
-  
+
+
+
+
+
+
+
+
+
+      
+      
+      
+
+#  configuration for h2 database
+#spring:
+#  application:
+#    name: polyflow-service
+#  datasource:
+#    url: jdbc:h2:mem:testdb
+#    driverClassName: org.h2.Driver
+#    username: sa
+#    password: password
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#      dialect: org.hibernate.dialect.H2Dialect
+#      show-sql: true
+
+#Spring Boot will let you set any available hibernate property using:
+#
+#  spring.jpa.properties.*
+
   h2:
     console:
       enabled: true

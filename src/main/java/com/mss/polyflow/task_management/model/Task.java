@@ -45,15 +45,17 @@ public class Task {
     private boolean taskStatus = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", updatable = false, insertable = false)
+    @JoinColumn(name = "category_id", updatable = false, insertable = false, nullable = false)
     private Category category;
 
-    @Column(name = "category_id")
+    @Column(name = "category_id", nullable = false)
     private Long categoryId;
 
     @CreationTimestamp
+    @Column(nullable = false)
     private Date creationTime;
 
     @UpdateTimestamp
+    @Column(nullable = false)
     private Date modificationTime;
 }

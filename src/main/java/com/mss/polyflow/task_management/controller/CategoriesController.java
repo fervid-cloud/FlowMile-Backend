@@ -1,6 +1,8 @@
 package com.mss.polyflow.task_management.controller;
 
 
+import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendResponse;
+
 import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.service.CategoryService;
@@ -16,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/task/category")
+@RequestMapping("/api/task_manage/category")
 public class CategoriesController {
 
     private static final Object SUCCESS = 1;
@@ -46,13 +48,8 @@ public class CategoriesController {
 
     @DeleteMapping("/delete/{categoryId}")
     private ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Long categoryId) {
-        return sendResponse(categoryService.deleteCategory(categoryId), "categories deleted successfully");
+        return sendResponse(categoryService.deleteCategory(categoryId), "category deleted successfully");
     }
 
-    private ResponseEntity<Object> sendResponse(Object data, String message) {
-        return new ResponseEntity(new ResponseModel()
-                                      .setData(data)
-                                      .setMessage(message)
-                                      .setData(SUCCESS), HttpStatus.OK);
-    }
+
 }

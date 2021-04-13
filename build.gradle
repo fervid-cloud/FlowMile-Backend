@@ -17,6 +17,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.4'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.23'
+
 
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -26,11 +28,11 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	compile group: 'org.json', name: 'json', version: '20201115'
 
-	compileOnly 'org.projectlombok:lombok:1.18.16'
-	annotationProcessor 'org.projectlombok:lombok:1.18.16'
+	compileOnly 'org.projectlombok:lombok:1.18.20'
+	annotationProcessor 'org.projectlombok:lombok:1.18.20'
 
-	testCompileOnly 'org.projectlombok:lombok:1.18.16'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+	testCompileOnly 'org.projectlombok:lombok:1.18.20'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
 
 }
 

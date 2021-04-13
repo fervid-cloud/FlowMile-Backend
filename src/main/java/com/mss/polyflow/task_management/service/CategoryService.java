@@ -1,7 +1,9 @@
 package com.mss.polyflow.task_management.service;
 
 import com.mss.polyflow.shared.exception.MiscellaneousException;
+import com.mss.polyflow.task_management.dto.mapper.CategoryMapper;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
+import com.mss.polyflow.task_management.model.Category;
 import com.mss.polyflow.task_management.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +20,22 @@ public class CategoryService {
     }
 
     @Transactional
-    public Object createCategory(CreateCategory category) {
-        return null;
+    public Object createCategory(CreateCategory createCategory) {
+        Category category = new Category()
+                                .setName(createCategory.getName())
+                                .setDescription(createCategory.getDescription());
+        category = categoryRepository.save(category);
+        return CategoryMapper.toCategoryDetail(category);
     }
 
     public Object getAllCategories() {
-        return categoryRepository.findAll();
+        return CategoryMapper.toCategoryDetailList(categoryRepository.findAll());
     }
 
     public Object getCategoryDetail(Long categoryId) {
-        return categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(categoryId)
                    .orElseThrow(() -> new MiscellaneousException("No such category exists"));
+        return CategoryMapper.toCategoryDetail(category);
     }
 
     @Transactional

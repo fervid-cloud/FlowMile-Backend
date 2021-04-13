@@ -9,6 +9,9 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class CreateNewTaskDto {
+public class CreateTask {
 
+    private String name;
+
+    private String description;
 }

@@ -1,5 +1,6 @@
-package com.mss.polyflow.task_management.dto.request;
+package com.mss.polyflow.task_management.dto.response;
 
+import java.sql.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,17 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class CreateCategory {
+public class TaskDetail {
+
+    private Long id;
 
     private String name;
 
     private String description;
+
+    private Long categoryId;
+
+    private Date creationTime;
+
+    private Date modificationTime;
 }

@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //@SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @SpringBootApplication
-public class DemoApplication {
+public class PolyFlowApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(PolyFlowApplication.class, args);
 	}
 
 

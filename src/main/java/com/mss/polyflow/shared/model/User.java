@@ -18,7 +18,6 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Builder
 @Data
-@Table
 @Accessors(chain = true)
 public class User {
 
