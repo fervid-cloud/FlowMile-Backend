@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.authentication;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

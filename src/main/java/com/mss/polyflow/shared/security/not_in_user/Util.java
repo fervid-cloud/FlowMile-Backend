@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.utilities;
+package com.mss.polyflow.shared.security.not_in_user;
 
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;

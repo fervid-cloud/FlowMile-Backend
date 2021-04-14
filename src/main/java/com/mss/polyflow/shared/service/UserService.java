@@ -1,7 +1,7 @@
 package com.mss.polyflow.shared.service;
 
 import com.mss.polyflow.shared.repository.UserRepository;
-import com.mss.polyflow.shared.security.AccessInfo;
+import com.mss.polyflow.shared.security.authorization.AccessInfo;
 import java.util.Arrays;
 import org.springframework.stereotype.Service;
 

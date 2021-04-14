@@ -1,6 +1,5 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.not_in_user;
 
-import com.mss.polyflow.shared.utilities.Util;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -9,9 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /***
  * Spring Security is installed as a single Filter in the chain, and its concerete type is FilterChainProxy, for reasons that will become apparent soon. In a Spring Boot app the security filter is a @Bean in the ApplicationContext, and it is installed by default so that it is applied to every request.
@@ -42,8 +38,8 @@ import org.springframework.stereotype.Component;
 /*
 It will automatically be added to filter chain by spring once it has been made component
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Component
+//@Order(Ordered.HIGHEST_PRECEDENCE)
+//@Component
 public class AuthenticationFilter implements Filter {
 
 

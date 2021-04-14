@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.utilities;
+package com.mss.polyflow.shared.utilities.functionality;
 
 import com.mss.polyflow.shared.model.User;
 import com.mss.polyflow.shared.repository.UserRepository;

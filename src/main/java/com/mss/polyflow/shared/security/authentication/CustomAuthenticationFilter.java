@@ -1,5 +1,8 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.authentication;
 
+import com.mss.polyflow.shared.security.authorization.AccessInfo;
+import com.mss.polyflow.shared.security.authorization.CustomAuthenticationToken;
+import com.mss.polyflow.shared.security.token.JWTManager;
 import com.mss.polyflow.shared.service.UserService;
 import java.io.IOException;
 import java.util.stream.Collectors;

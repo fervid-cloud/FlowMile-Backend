@@ -4,7 +4,7 @@ import com.mss.polyflow.shared.dto.LoginResponseDto;
 import com.mss.polyflow.shared.dto.UserLoginDto;
 import com.mss.polyflow.shared.model.User;
 import com.mss.polyflow.shared.repository.UserRepository;
-import com.mss.polyflow.shared.security.JWTManager;
+import com.mss.polyflow.shared.security.token.JWTManager;
 import javax.security.sasl.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

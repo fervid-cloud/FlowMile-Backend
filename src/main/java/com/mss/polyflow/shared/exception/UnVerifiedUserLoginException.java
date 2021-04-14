@@ -1,5 +1,6 @@
 package com.mss.polyflow.shared.exception;
 
+
 public class UnVerifiedUserLoginException extends RuntimeException{
 
     private static final String name = "UnVerifiedUserLoginException";

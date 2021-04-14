@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.authorization;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

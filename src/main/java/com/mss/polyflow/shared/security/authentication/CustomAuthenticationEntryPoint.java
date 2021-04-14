@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.authentication;
 
 import com.mss.polyflow.shared.exception.ExceptionResponseModel;
 import com.fasterxml.jackson.databind.ObjectMapper;

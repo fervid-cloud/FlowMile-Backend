@@ -1,4 +1,4 @@
-package com.mss.polyflow.shared.security;
+package com.mss.polyflow.shared.security.token;
 
 import com.mss.polyflow.shared.exception.TokenExpiredException;
 import com.mss.polyflow.shared.model.User;

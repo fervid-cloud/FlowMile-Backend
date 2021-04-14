@@ -18,18 +18,17 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.stereotype.Indexed;
 
+/*
+
+@Table(name = "school_admin", indexes = {
+    @Index(columnList = "school_code", name = "school_code_idx")
+})
+*/
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-/*
-indexes are automatically created on foreign keys in mysql
-@Table(name = "school_admin", indexes = {
-    @Index(columnList = "school_code", name = "school_code_idx")
-})
-*/
-
 public class Task {
 
     @Id

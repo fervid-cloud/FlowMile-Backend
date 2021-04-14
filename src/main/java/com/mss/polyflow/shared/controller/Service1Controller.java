@@ -1,6 +1,6 @@
 package com.mss.polyflow.shared.controller;
 
-import com.mss.polyflow.shared.security.CustomAuthenticationToken;
+import com.mss.polyflow.shared.security.authorization.CustomAuthenticationToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

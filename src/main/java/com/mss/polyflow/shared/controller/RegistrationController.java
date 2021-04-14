@@ -2,7 +2,6 @@ package com.mss.polyflow.shared.controller;
 
 
 import com.mss.polyflow.shared.dto.RegistrationRequestDto;
-import com.mss.polyflow.shared.dto.ResponseModel;
 import com.mss.polyflow.shared.exception.InvalidRegistrationRequest;
 import com.mss.polyflow.shared.service.RegistrationService;
 import java.util.HashMap;
