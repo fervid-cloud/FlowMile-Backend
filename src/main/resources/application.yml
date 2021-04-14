@@ -1,5 +1,5 @@
 server:
-  port: 3300
+  port: 3852
 
 logging:
   level:
@@ -102,6 +102,6 @@ springdoc:
   api-docs:
     path: /api-docs
   # swagger-ui custom path
-  swagger-ui.path: /swagger-ui.html
+  swagger-ui.path: /open_api.html
   use-fqn: true
 

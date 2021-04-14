@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -32,6 +33,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
+
 public class Category {
 
     @Id
@@ -52,11 +54,13 @@ public class Category {
      */
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "category_id", insertable = false, updatable = false, nullable = false)
+    @ToString.Exclude // to avoid the bug of lombok to fetch the associated entities while in it's generated toString method
     private List<Task> tasks;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false, nullable = false)
+    @ToString.Exclude
     private User user;
 
     @Column(name = "user_id", nullable = false)

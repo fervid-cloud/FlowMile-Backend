@@ -24,14 +24,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @Table(indexes = {
     @Index(columnList = "username", name = "username_index"),
-    @Index(columnList = "email_id", name = "email_id_index")
+    @Index(columnList = "email", name = "email_index")
 })
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false)
-    private Integer userId;
+    private Long userId;
 
     @Column(nullable = false, unique = true, updatable = true)
     private String username;
@@ -40,7 +40,7 @@ public class User {
     private String password;
 
     @Column(nullable = false, unique = true)
-    private String emailId;
+    private String email;
 
     private String phoneNumber;
 

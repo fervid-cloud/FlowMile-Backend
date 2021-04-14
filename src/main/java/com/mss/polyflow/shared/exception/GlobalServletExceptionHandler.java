@@ -3,9 +3,12 @@ package com.mss.polyflow.shared.exception;
 
 import com.mss.polyflow.shared.exception.ExceptionResponseModel.ExceptionResponseModelBuilder;
 import com.mss.polyflow.shared.utilities.response.ResponseModel;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,11 +37,41 @@ public class GlobalServletExceptionHandler {
 
         return sendResponse(exceptionResponseModel);
     }
+
     @ExceptionHandler({MiscellaneousException.class})
-    public final ResponseEntity<Object> handleMiscellaneousException(MiscellaneousException exception) {
+    public final ResponseEntity<Object> handleMiscellaneousExceptionHandler(MiscellaneousException exception) {
         return sendResponse(erb -> erb
                                        .message(exception.getMessage())
                                        .error(exception.getName())
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler({UserNotFoundException.class})
+    public final ResponseEntity<Object> handleUserNotFoundExceptionHandler(UserNotFoundException exception) {
+        return sendResponse(erb -> erb
+                                       .message(exception.getMessage())
+                                       .error(exception.getName())
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.BAD_REQUEST));
+    }
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public final ResponseEntity<Object> SQLIntegrityConstraintViolationExceptionHandler(DataIntegrityViolationException exception) {
+/*
+        Since you are using spring-data JPA repository to save entity you should catch DataIntegrityViolationException instead of SQLException
+        The problem with showing user-friendly messages in the case of constraint violation is that the constraint name
+        is lost when Hibernate's ConstraintViolationException is being translated into Spring's DataIntegrityViolationException.*/
+        return sendResponse(erb -> erb
+                                       .message("Either duplicate or null entry found")
+                                       .error("DataIntegrityViolationException")
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.BAD_REQUEST));
+    }
+    @ExceptionHandler({Exception.class})
+    public final ResponseEntity<Object> handleUserNotFoundException(Exception exception) {
+        return sendResponse(erb -> erb
+                                       .message(exception.getMessage())
+                                       .error("Generic Exception")
                                        .time(getCurrentLocalTime())
                                        .httpStatus(HttpStatus.BAD_REQUEST));
     }

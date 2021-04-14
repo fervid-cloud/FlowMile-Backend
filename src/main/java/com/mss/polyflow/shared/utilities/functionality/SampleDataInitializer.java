@@ -50,10 +50,10 @@ public class SampleDataInitializer implements CommandLineRunner {
         int n = 10;
         for(int i = 1 ; i <= n; ++i) {
             userRepository.save(User.builder()
-            .userId(i)
+            .userId((long)i)
             .username("user" + i + "@test.com")
             .password("user" + i + "123")
-            .emailId("user" + i + "@test.com")
+            .email("user" + i + "@test.com")
             .firstName("firstName" + i)
             .lastName("lastName" + i)
             .phoneNumber("123456789" + (i - 1))

@@ -1,10 +1,12 @@
 package com.mss.polyflow.shared.controller;
 
 
-import com.mss.polyflow.shared.dto.RegistrationRequestDto;
+import com.mss.polyflow.shared.dto.request.UserRegistrationDto;
 import com.mss.polyflow.shared.exception.InvalidRegistrationRequest;
 import com.mss.polyflow.shared.service.RegistrationService;
+import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import java.util.HashMap;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/api/register")
 public class RegistrationController {
 
 
@@ -25,8 +27,8 @@ public class RegistrationController {
         this.registrationService = registrationService;
     }
 
-    @PostMapping("/new")
-    public ResponseEntity<Object> registerNewUser(@RequestBody RegistrationRequestDto user) {
+    @PostMapping("/newUser")
+    public ResponseEntity<Object> registerNewUser(@RequestBody @Valid UserRegistrationDto user) {
 
         if(!isValidRequest(user)) {
             throw new InvalidRegistrationRequest();
@@ -58,19 +60,19 @@ public class RegistrationController {
 
     private ResponseEntity<Object> sendResponse(Object response) {
         ResponseModel responseModel = ResponseModel.builder()
-                                          .successStatus(1)
+                                          .status(1l)
                                           .message("successful")
-                                          .object(response)
+                                          .data(response)
                                           .build();
 
         return new ResponseEntity<>(responseModel, HttpStatus.OK);
     }
 
-    private boolean isValidRequest(RegistrationRequestDto user) {
+    private boolean isValidRequest(UserRegistrationDto user) {
         return user != null
                    && user.getUsername() != null && !user.getUsername().isEmpty()
                    && user.getPassword() != null && !user.getPassword().isEmpty()
-                   && user.getEmailId() != null && !user.getEmailId().isEmpty()
+                   && user.getEmail() != null && !user.getEmail().isEmpty()
                    && user.getFirstName() != null && !user.getFirstName().isEmpty()
                    && user.getLastName() != null && !user.getLastName().isEmpty();
     }

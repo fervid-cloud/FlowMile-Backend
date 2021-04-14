@@ -56,7 +56,7 @@ public class ExceptionResponseModel {
 
     public static class ExceptionResponseModelBuilder {
 
-        private String error;
+        private String error = "Some Exception";
 
         private String message;
 

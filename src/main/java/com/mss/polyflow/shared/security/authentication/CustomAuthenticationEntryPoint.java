@@ -50,8 +50,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         System.out.println("Current time is :-----------------------------" + curTime);
         response.addHeader("WWW-Authenticate", "Custom realm");
         ExceptionResponseModel unAuthenticatedResponse = ExceptionResponseModel.builder()
-                                                             .error("UnAuthorized")
-                                                             .message("Incorrect username or password")
+                                                             .error("Unauthorized")
+                                                             .message("You are unauthenticated")
                                                              .httpStatus(HttpStatus.UNAUTHORIZED)
                                                              .time(curTime)
                                                              .build();

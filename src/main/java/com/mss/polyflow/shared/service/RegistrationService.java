@@ -1,6 +1,6 @@
 package com.mss.polyflow.shared.service;
 
-import com.mss.polyflow.shared.dto.RegistrationRequestDto;
+import com.mss.polyflow.shared.dto.request.UserRegistrationDto;
 import com.mss.polyflow.shared.model.User;
 import com.mss.polyflow.shared.repository.RegistrationRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,29 +20,26 @@ public class RegistrationService {
         this.passwordEncoder = delegatingPasswordEncoder;
     }
 
-    public Object registerNewUser(RegistrationRequestDto registrationRequestDto) {
+    public Object registerNewUser(UserRegistrationDto userRegistrationDto) {
 
-        String hashedPassword = getPlainToHashedPassword(registrationRequestDto.getPassword());
+        String hashedPassword = passwordEncoder.encode(userRegistrationDto.getPassword());
 
         User newRegisteredUser = User.builder()
-                                     .username(registrationRequestDto.getUsername())
+                                     .username(userRegistrationDto.getUsername())
                                      .password(hashedPassword)
-                                     .emailId(registrationRequestDto.getUsername())
-                                     .firstName(registrationRequestDto.getFirstName())
-                                     .lastName(registrationRequestDto.getLastName())
-                                     .phoneNumber(registrationRequestDto.getPhoneNumber())
+                                     .email(userRegistrationDto.getUsername())
+                                     .firstName(userRegistrationDto.getFirstName())
+                                     .lastName(userRegistrationDto.getLastName())
+                                     .phoneNumber(userRegistrationDto.getPhoneNumber())
                                      .isVerified(false)
                                      .isEnabled(true)
                                      .isAccountLocked(false)
                                      .build();
         registrationRepository.save(newRegisteredUser);
-        return registrationRequestDto;
+        return userRegistrationDto;
 
     }
 
-    private String getPlainToHashedPassword(String password) {
-        return passwordEncoder.encode(password);
-    }
 
     public Object verifyCurrentUser(String username) {
         return "";

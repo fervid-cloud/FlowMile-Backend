@@ -3,6 +3,7 @@ package com.mss.polyflow.shared.exception;
 import lombok.Data;
 import lombok.Getter;
 
+
 @Getter
 public class MiscellaneousException extends RuntimeException{
 
@@ -10,6 +11,10 @@ public class MiscellaneousException extends RuntimeException{
 
     public MiscellaneousException(String message) {
         super(message);
+    }
+
+    public static String getName() {
+        return name;
     }
 
 }
