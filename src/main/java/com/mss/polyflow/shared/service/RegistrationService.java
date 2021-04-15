@@ -1,5 +1,6 @@
 package com.mss.polyflow.shared.service;
 
+import com.mss.polyflow.shared.dto.UserMapper;
 import com.mss.polyflow.shared.dto.request.UserRegistrationDto;
 import com.mss.polyflow.shared.model.User;
 import com.mss.polyflow.shared.repository.RegistrationRepository;
@@ -24,7 +25,7 @@ public class RegistrationService {
 
         String hashedPassword = passwordEncoder.encode(userRegistrationDto.getPassword());
 
-        User newRegisteredUser = User.builder()
+        User user = User.builder()
                                      .username(userRegistrationDto.getUsername())
                                      .password(hashedPassword)
                                      .email(userRegistrationDto.getUsername())
@@ -35,9 +36,9 @@ public class RegistrationService {
                                      .isEnabled(true)
                                      .isAccountLocked(false)
                                      .build();
-        registrationRepository.save(newRegisteredUser);
-        return userRegistrationDto;
+        user = registrationRepository.save(user);
 
+        return UserMapper.toUserDetailDto(user);
     }
 
 

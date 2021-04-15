@@ -15,19 +15,19 @@ import org.springframework.http.ResponseEntity;
 @Accessors(chain = true)
 public class ResponseModel {
 
-    private static final Object SUCCESS = 1;
+    private static final Integer SUCCESS = 1;
 
     private String message;
 
     private Object data;
 
-    private Long status;
+    private Integer status;
 
     public static ResponseEntity<Object> sendResponse(Object data, String message) {
         return new ResponseEntity(new ResponseModel()
                                       .setData(data)
                                       .setMessage(message)
-                                      .setData(SUCCESS), HttpStatus.OK);
+                                      .setStatus(SUCCESS), HttpStatus.OK);
     }
 
 }

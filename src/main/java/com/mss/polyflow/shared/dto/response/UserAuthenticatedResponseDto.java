@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class UserAuthenticatedResponseDto {
 
-    private String username;
+    private UserDetailDto userDetailDto;
 
     private String accessToken;
 

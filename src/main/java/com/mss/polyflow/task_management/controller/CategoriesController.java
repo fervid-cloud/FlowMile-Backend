@@ -29,6 +29,13 @@ public class CategoriesController {
         this.categoryService = categoryService;
     }
 
+
+
+    @GetMapping("/ping")
+    private ResponseEntity<Object> pingCategory() {
+        return sendResponse(null, "category handler working successfully");
+    }
+
     @PostMapping("/create")
     private ResponseEntity<Object> createCategory(@RequestBody CreateCategory category) {
         Object createdCategory = categoryService.createCategory(category);

@@ -25,6 +25,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @GetMapping("/ping")
+    private ResponseEntity<Object> pingTask() {
+        return sendResponse(null, "task handler working successfully");
+    }
+
     @PostMapping("/create")
     private ResponseEntity<Object> createTask(@RequestBody CreateTask createTask) {
         Object createdTask = taskService.createTask(createTask);

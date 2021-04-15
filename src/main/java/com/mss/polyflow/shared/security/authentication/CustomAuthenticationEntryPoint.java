@@ -3,12 +3,16 @@ package com.mss.polyflow.shared.security.authentication;
 import com.mss.polyflow.shared.exception.ExceptionResponseModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +38,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
+@Slf4j
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final ObjectMapper objectMapper;
@@ -45,18 +50,28 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     public void commence(HttpServletRequest request, HttpServletResponse response,
         AuthenticationException authException) throws IOException {
-        System.out.println("------------------------ UnAuthenticated User ---------------------------------------------------------------");
+        log.info("------------------------ UnAuthenticated User ---------------------------------------------------------------");
         String curTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy, HH:mm:ss a"));
-        System.out.println("Current time is :-----------------------------" + curTime);
+        log.info("Current time is :----------------------------- {}", curTime);
         response.addHeader("WWW-Authenticate", "Custom realm");
         ExceptionResponseModel unAuthenticatedResponse = ExceptionResponseModel.builder()
                                                              .error("Unauthorized")
-                                                             .message("You are unauthenticated")
+                                                             .message("You are unauthorized")
                                                              .httpStatus(HttpStatus.UNAUTHORIZED)
                                                              .time(curTime)
                                                              .build();
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        objectMapper.writeValue(response.getWriter(), unAuthenticatedResponse);
+
+        SecurityContextHolder.clearContext();
+        PrintWriter out = response.getWriter();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        // basically writing to the response stream using writer which writes characters
+        objectMapper.writeValue(out, unAuthenticatedResponse);
+//        out.write(objectMapper.writeValueAsString(unAuthenticatedResponse)) this also works
+        out.flush();
+        out.close();
+
     }
 
 

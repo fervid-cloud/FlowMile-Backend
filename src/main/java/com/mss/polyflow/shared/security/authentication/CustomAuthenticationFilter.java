@@ -10,6 +10,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +19,7 @@ import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-
+@Slf4j
 public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
     public static final String BEARER_PREFIX = "Bearer ";
@@ -42,7 +43,6 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
-        try {
 
             String authorizationHeaderValue = request.getHeader(AUTHORIZATION_HEADER);
             if (authorizationHeaderValue == null || !authorizationHeaderValue.startsWith(BEARER_PREFIX)) {
@@ -51,29 +51,39 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             }
 
             String jwtToken = authorizationHeaderValue.substring(BEARER_PREFIX.length());
-            String username = jwtManager.getUsername(jwtToken);
+            String username = jwtManager.verifyAndGetUsername(jwtToken);
             System.out.println("username is : " + username);
+
             if(username != null) {
-                AccessInfo accessInfo = userService.getAccessInfo(username);
-                System.out.println("User Info is : " + accessInfo);
-                CustomAuthenticationToken customAuthenticationToken = new CustomAuthenticationToken(accessInfo.getAuthorities().stream().map(
-                    SimpleGrantedAuthority::new).collect(Collectors.toList()));
-                customAuthenticationToken.setUsername(username);
-                customAuthenticationToken.setAccessInfo(accessInfo);
-                customAuthenticationToken.setAuthenticated(true);
-                SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
-                System.out.println("USER IS VERIFIED ------------------------------");
-                System.out.println(customAuthenticationToken);
-                System.out.println("------------------------------------------------------------------------");
+                CurrentUserDetail currentUserDetail = userService.getUserDetailForAuthentication(username);
+
+                if(currentUserDetail != null) {
+                    log.info("User Info is : {}", currentUserDetail);
+
+                    AccessInfo accessInfo = new AccessInfo();
+                    CustomAuthenticationToken customAuthenticationToken = new CustomAuthenticationToken(accessInfo.getAuthorities().stream().map(
+                            SimpleGrantedAuthority::new).collect(Collectors.toList()));
+
+                    customAuthenticationToken.setDetails(currentUserDetail);
+                    customAuthenticationToken.setUsername(username);
+                    customAuthenticationToken.setAccessInfo(accessInfo);
+                    customAuthenticationToken.setAuthenticated(true);
+
+                    SecurityContextHolder.getContext().setAuthentication(customAuthenticationToken);
+
+                    log.info("user has been authenticated");
+                    log.info("current authenticated user authentication token is {}", customAuthenticationToken);
+                }
             }
-            System.out.println("authentication filter done, going further in chain");
+
+            log.info("authentication filter done, going further in filter chain");
             filterChain.doFilter(request, response);
-        }
+/*        }
          catch (AuthenticationException exception) {
-             System.out.println("Invalid user ---------------------------");
+             log.info("Invalid user ---------------------------");
              SecurityContextHolder.clearContext();
              onUnSuccessfulAuthentication(request, response, exception);
-         }
+         }*/
     }
 
 

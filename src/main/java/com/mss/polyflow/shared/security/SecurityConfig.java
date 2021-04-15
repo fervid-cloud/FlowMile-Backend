@@ -107,6 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.requestCache().disable();
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+        http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
     }
 
     /**
@@ -177,7 +178,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
+//    @Bean
     WebMvcConfigurer webMvcConfigurer() {
 
         /**
@@ -190,7 +191,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
 //					.maxAge(0)
-                    .allowedOrigins("http://localhost:3300")
+                    .allowedOrigins("*")
 //                    .allowedMethods("HEAD")
                     .allowedHeaders("Authorization");
             }

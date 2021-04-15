@@ -1,6 +1,8 @@
 package com.mss.polyflow.shared.service;
 
+import com.mss.polyflow.shared.dto.UserMapper;
 import com.mss.polyflow.shared.repository.UserRepository;
+import com.mss.polyflow.shared.security.authentication.CurrentUserDetail;
 import com.mss.polyflow.shared.security.authorization.AccessInfo;
 import java.util.Arrays;
 import org.springframework.stereotype.Service;
@@ -17,16 +19,20 @@ public class UserService {
     public AccessInfo getAccessInfo(String username) {
         AccessInfo accessInfo = new AccessInfo();
         if(username.equals("user1@test.com")) {
-            accessInfo.setRoleId(2);
+            accessInfo.setRoleId(2l);
             accessInfo.setRoleName("admin");
             accessInfo.setAuthorities(Arrays.asList(new String[]{"service1-read", "service1-write"}));
         } else if(username.equals("user2@test.com")) {
-            accessInfo.setRoleId(1);
+            accessInfo.setRoleId(1l);
             accessInfo.setRoleName("superadmin");
             accessInfo.setAuthorities(Arrays.asList(new String[]{"service1-read", "service1-write", "service1-edit", "service1-delete"}));
         } else {
             return null;
         }
         return accessInfo;
+    }
+
+    public CurrentUserDetail getUserDetailForAuthentication(String username) {
+        return UserMapper.toCurrentUserDetail(userRepository.findByUsername(username).orElse(null));
     }
 }

@@ -60,7 +60,7 @@ public class RegistrationController {
 
     private ResponseEntity<Object> sendResponse(Object response) {
         ResponseModel responseModel = ResponseModel.builder()
-                                          .status(1l)
+                                          .status(1)
                                           .message("successful")
                                           .data(response)
                                           .build();

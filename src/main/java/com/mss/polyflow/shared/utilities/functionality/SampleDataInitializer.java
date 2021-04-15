@@ -37,7 +37,7 @@ public class SampleDataInitializer implements CommandLineRunner {
         log.info("-----------------------------------------------");
         log.info("printing the argument data of commandLineRunner");
         for(int i = 0; i < len; ++i) {
-            System.out.println(args[i]);
+            log.info(args[i]);
         }
         log.info("end of printing of command line runner");
         log.info("------------------------------------------------");
@@ -68,11 +68,11 @@ public class SampleDataInitializer implements CommandLineRunner {
         TypeReference<HashMap<String,Object>> typeRef
             = new TypeReference<HashMap<String,Object>>() {};
         Map<String, Object> value = objectMapper.readValue(data, typeRef);
-        System.out.println("Map data is : " + mapData);
-        System.out.println("the other data is " + value);
+        log.info("Map data is : {}",  mapData);
+        log.info("the other data is {}", value);
 
         value.keySet().forEach(System.out:: println);
-        System.out.println("Printing entry set");
+        log.info("Printing entry set");
         value.entrySet().forEach(System.out:: println);
     }
 }

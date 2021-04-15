@@ -1,5 +1,6 @@
 package com.mss.polyflow.shared.controller;
 
+import com.mss.polyflow.shared.dto.UserMapper;
 import com.mss.polyflow.shared.dto.request.UserLoginDto;
 import com.mss.polyflow.shared.dto.response.UserAuthenticatedResponseDto;
 import com.mss.polyflow.shared.exception.MiscellaneousException;
@@ -35,23 +36,26 @@ public class LoginController {
         this.delegatePasswordEncoder = delegatePasswordEncoder;
     }
 
-    @PostMapping("/login")
+    @PostMapping("/userLogin")
     private ResponseEntity<?> loginUser(@RequestBody @Valid UserLoginDto userLoginDto) {
 
         User user = authenticateUser(userLoginDto.getUsername(), userLoginDto.getPassword());
         String generatedJWT = jwtManager.generateToken(user);
-        return new ResponseEntity<>(new UserAuthenticatedResponseDto().setAccessToken(generatedJWT).setUsername(userLoginDto.getUsername()).setMessage("Login Successful"), HttpStatus.OK);
+        return new ResponseEntity<>(new UserAuthenticatedResponseDto()
+                                        .setAccessToken(generatedJWT)
+                                        .setUserDetailDto(UserMapper.toUserDetailDto(user))
+                                        .setMessage("Login Successful"), HttpStatus.OK);
     }
 
     private User authenticateUser(String username, String password) {
         if(username == null || password == null) {
-            throw new MiscellaneousException("Bad Request was there while attempting to LogIn");
+            throw new MiscellaneousException("Invalid data was there for login attempt");
         }
 
         User user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException :: new);
 
-        String hashedPassword = this.delegatePasswordEncoder.encode(password);
-        if(!user.getUsername().equals(username) || !user.getPassword().equals(hashedPassword)) {
+//        String hashedPassword = this.delegatePasswordEncoder.encode(password);
+        if(!user.getUsername().equals(username) || !this.delegatePasswordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
         return user;

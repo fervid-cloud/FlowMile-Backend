@@ -11,6 +11,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -53,8 +54,9 @@ public class GlobalServletExceptionHandler {
                                        .message(exception.getMessage())
                                        .error(exception.getName())
                                        .time(getCurrentLocalTime())
-                                       .httpStatus(HttpStatus.BAD_REQUEST));
+                                       .httpStatus(HttpStatus.NOT_FOUND));
     }
+
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public final ResponseEntity<Object> SQLIntegrityConstraintViolationExceptionHandler(DataIntegrityViolationException exception) {
 /*
@@ -65,10 +67,20 @@ public class GlobalServletExceptionHandler {
                                        .message("Either duplicate or null entry found")
                                        .error("DataIntegrityViolationException")
                                        .time(getCurrentLocalTime())
-                                       .httpStatus(HttpStatus.BAD_REQUEST));
+                                       .httpStatus(HttpStatus.BAD_GATEWAY));
     }
+
+    @ExceptionHandler({BadCredentialsException.class})
+    public final ResponseEntity<Object> BadCredentialsExceptionHandler(BadCredentialsException exception) {
+        return sendResponse(erb -> erb
+                                       .message(exception.getMessage())
+                                       .error("BadCredentialsException")
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.UNAUTHORIZED));
+    }
+
     @ExceptionHandler({Exception.class})
-    public final ResponseEntity<Object> handleUserNotFoundException(Exception exception) {
+    public final ResponseEntity<Object> handleGenericExceptionHandler(Exception exception) {
         return sendResponse(erb -> erb
                                        .message(exception.getMessage())
                                        .error("Generic Exception")

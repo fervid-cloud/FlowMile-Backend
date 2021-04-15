@@ -1,17 +1,18 @@
-package com.mss.polyflow.shared.dto.response;
+package com.mss.polyflow.shared.security.authentication;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-
-@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Accessors(chain = true)
-public class UserDetailDto {
+public class CurrentUserDetail {
 
     private Long userId;
 
@@ -42,6 +43,4 @@ public class UserDetailDto {
     private boolean isEnabled = true;
 
     private boolean isVerified = true;
-
-
 }

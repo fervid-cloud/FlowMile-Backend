@@ -42,7 +42,7 @@ public class JWTManager {
     @Value("${mac.jwtSecret}")
     private String jwtSecret;
 
-    public String getUsername(String givenToken) {
+    public String verifyAndGetUsername(String givenToken) {
         JWTClaimsSet claimsSet = verifyToken(givenToken);
         return (claimsSet != null) ? claimsSet.getSubject() : null;
     }
