@@ -111,6 +111,7 @@ public class GlobalServletExceptionHandler {
                                        .time(getCurrentLocalTime())
                                        .httpStatus(HttpStatus.NOT_FOUND));
     }
+
     @ExceptionHandler({Exception.class})
     public final ResponseEntity<Object> handleGenericExceptionHandler(Exception exception) {
         exception.printStackTrace();

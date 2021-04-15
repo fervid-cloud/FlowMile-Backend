@@ -5,9 +5,12 @@ import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.shared.security.authentication.CurrentUserDetail;
 import com.mss.polyflow.shared.utilities.functionality.CurrentUserManager;
 import com.mss.polyflow.task_management.dto.mapper.CategoryMapper;
+import com.mss.polyflow.task_management.dto.mapper.TaskMapper;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.model.Category;
 import com.mss.polyflow.task_management.repository.CategoryRepository;
+import com.mss.polyflow.task_management.utilities.PaginationUtility;
+import java.util.List;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +36,22 @@ public class CategoryService {
         return CategoryMapper.toCategoryDetail(category);
     }
 
-    public Object getAllCategories() {
-        return CategoryMapper.toCategoryDetailList(categoryRepository.findAllByUserId(CurrentUserManager.getCurrentUserId()));
+    public Object getAllCategories(Long pageSize, Long pageNumber) {
+        long offSet = (pageNumber - 1) * pageSize;
+        long totalCount = categoryRepository.countTotalCategory(CurrentUserManager.getCurrentUserId());
+        if(offSet >= totalCount) {
+            throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
+        }
+        List<Category> categories = categoryRepository.findCategories(pageSize, offSet, CurrentUserManager.getCurrentUserId());
+        long totalPages = (long) Math.ceil(totalCount/pageSize);
+
+        return PaginationUtility.toPaginationWrapper(
+            pageSize,
+            pageNumber,
+            totalPages,
+            totalCount,
+            CategoryMapper.toCategoryDetailList(categories)
+        );
     }
 
     public Object getCategoryDetail(Long categoryId) {

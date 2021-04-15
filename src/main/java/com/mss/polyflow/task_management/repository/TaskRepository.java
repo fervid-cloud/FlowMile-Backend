@@ -34,4 +34,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     int deleteTask( @Param("taskId") Long taskId,  @Param("currentUserId") Long currentUserId);
 
     List<Task> findAllByCategoryId(Long categoryId);
+
+    @Query(nativeQuery = true, value = "select count(ts.category_id) from task as ts where ts.category_id = :categoryId")
+    long countTotalTasks(@Param("categoryId") Long categoryId);
+
+    @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId limit :pageSize offset :offSet")
+    List<Task> findTasks(@Param("categoryId") Long categoryId, @Param("pageSize") Long pageSize, @Param("offSet") Long offSet);
 }

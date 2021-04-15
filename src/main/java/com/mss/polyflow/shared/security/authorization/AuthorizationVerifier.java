@@ -1,29 +1,30 @@
 package com.mss.polyflow.shared.security.authorization;
 
+import java.util.Collections;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component("authorizationVerifier")
 public class AuthorizationVerifier {
 
     public boolean isUserAuthorizedForThisService(Authentication authentication, String ... authorizationInfo) {;
-        System.out.println("--------------------------------------------------------------------------");
+        log.info("starting user authorization process");
+
         CustomAuthenticationToken currentUserDetail = (CustomAuthenticationToken) authentication;
-        System.out.println("Current user info is : " + currentUserDetail);
-        System.out.println("checking for " + authorizationInfo);
-        for(String userAuthorization : currentUserDetail.getAccessInfo().getAuthorities()) {
-            System.out.println("Authority of this user is : "+ userAuthorization);
-            for(String authorizationNeeded : authorizationInfo) {
-                System.out.println("verfiy user authorization against : " + authorizationNeeded);
-                if (authorizationNeeded.equals(userAuthorization)) {
-                    System.out.println("User is Authorized");
-                    System.out.println("user has " + authorizationNeeded + " authorization");
-                    return true;
-                }
+        List<String> authorities = currentUserDetail.getAccessInfo().getAuthorities();
+        authorities.sort((x, y) -> x.compareTo(y));
+        for(String authorizationNeeded : authorizationInfo) {
+            if (Collections.binarySearch(authorities, authorizationNeeded) < 0) {
+                log.info("user doesn't have all the permissions required for this service, user is not authorized");
+                return false;
             }
         }
-        System.out.println("USER IS NOT AUTHORIZED");
-        return false;
+
+        log.info("user has all the permissions required for this service, user is authorized");
+        return true;
     }
 
 }

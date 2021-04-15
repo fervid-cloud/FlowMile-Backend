@@ -6,7 +6,9 @@ import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendRespo
 import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.service.CategoryService;
+import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import javax.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,8 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/task_manage/category")
 public class CategoryController {
@@ -44,8 +48,14 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    private ResponseEntity<Object> getAllCategories() {
-        return sendResponse(categoryService.getAllCategories(), "categories fetched successfully");
+    private ResponseEntity<Object> getAllCategories(
+        @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
+        @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
+    ) {
+        log.info("page size is : {}", pageSize);
+        log.info("page number is : {}", pageNumber);
+        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
+        return sendResponse(categoryService.getAllCategories(pageSize, pageNumber), "categories fetched successfully");
     }
 
     @RequestMapping(value = "/detail/{categoryId}", method = RequestMethod.GET)

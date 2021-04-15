@@ -2,11 +2,16 @@ package com.mss.polyflow.task_management.controller;
 
 import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendResponse;
 
-import com.mss.polyflow.task_management.dto.request.CreateCategory;
+import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
 import com.mss.polyflow.task_management.service.TaskService;
+import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/task_manage/task")
 public class TaskController {
@@ -37,9 +44,26 @@ public class TaskController {
         return sendResponse(createdTask, "task created successfully");
     }
 
+
+
+
+    @Validated
     @GetMapping("/all/{categoryId}")
-    private ResponseEntity<Object> getAllTasks(@PathVariable Long categoryId) {
-        return sendResponse(taskService.getAllTasks(categoryId), "tasks fetched successfully");
+    private Object getAllTasks (
+        @PathVariable @Min(value = 1, message = "invalid categoryId value")  Long categoryId,
+        @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
+        @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
+    ) {
+        if(categoryId < 1) {
+            throw new MiscellaneousException("Invalid CategoryId provided");
+        }
+        log.info("page size is : {}", pageSize);
+        log.info("page number is : {}", pageNumber);
+        log.info("categoryId  is : {}", categoryId);
+        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
+        Object response = taskService.getAllTasks(categoryId, pageSize, pageNumber);
+        return sendResponse(response, "tasks fetched successfully");
+
     }
 
     @RequestMapping(value = "/detail/{taskId}", method = RequestMethod.GET)

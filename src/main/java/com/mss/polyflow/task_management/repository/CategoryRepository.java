@@ -21,4 +21,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Modifying
     @Query(nativeQuery = true, value = "delete from category as ct where ct.id = :categoryId && ct.user_id = :currentUserId")
     int deleteCategory(@Param("categoryId") Long categoryId, @Param("currentUserId") Long currentUserId);
+
+    @Query(nativeQuery = true, value = "select count(ct.id) from category as ct where ct.user_id = :currentUserId")
+    long countTotalCategory(@Param("currentUserId") Long currentUserId);
+
+    @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId limit :pageSize offset :offSet")
+    List<Category> findCategories(@Param("pageSize") Long pageSize, @Param("offSet")  Long offSet, @Param("currentUserId")  Long currentUserId);
 }
