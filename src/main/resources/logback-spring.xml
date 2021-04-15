@@ -57,10 +57,10 @@
 
   <!--
 
-  Let's see how to include a Logback configuration with a different color and logging pattern, with separate
+  basically this is how we include a Logback configuration to specify a different color and logging pattern, with separate
   specifications for console and file output, and with a decent rolling policy to avoid generating huge log files.
 
-  First, we should find a solution that allows for handling our logging settings alone instead of polluting
+  we should try the approach that allows for handling our logging settings alone instead of polluting
   application.properties, which is commonly used for many other application settings.
 
   When a file in the classpath has one of the following names, Spring Boot will automatically load it over

@@ -1,6 +1,6 @@
 package com.mss.polyflow.task_management.dto.response;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class TaskDetail {
 
     private Long categoryId;
 
-    private Date creationTime;
+    private LocalDateTime creationTime;
 
-    private Date modificationTime;
+    private LocalDateTime modificationTime;
 }

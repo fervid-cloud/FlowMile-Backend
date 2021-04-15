@@ -1,6 +1,6 @@
 package com.mss.polyflow.task_management.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,9 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.stereotype.Indexed;
 
 /*
 
@@ -54,9 +52,9 @@ public class Task {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private Date creationTime;
+    private LocalDateTime creationTime;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private Date modificationTime;
+    private LocalDateTime modificationTime;
 }

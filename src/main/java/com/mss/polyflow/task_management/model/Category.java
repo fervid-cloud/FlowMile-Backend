@@ -1,7 +1,7 @@
 package com.mss.polyflow.task_management.model;
 
 import com.mss.polyflow.shared.model.User;
-import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,9 +68,9 @@ public class Category {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private Date creationTime;
+    private LocalDateTime creationTime;
 
     @UpdateTimestamp
     @Column(nullable = false)
-    private Date modificationTime;
+    private LocalDateTime modificationTime;
 }

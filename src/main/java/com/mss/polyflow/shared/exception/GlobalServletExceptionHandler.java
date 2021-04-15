@@ -6,15 +6,21 @@ import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalServletExceptionHandler {
 
@@ -79,8 +85,35 @@ public class GlobalServletExceptionHandler {
                                        .httpStatus(HttpStatus.UNAUTHORIZED));
     }
 
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public final ResponseEntity<Object> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        log.info("Invalid data is there -------------------- {}", errors);
+        return sendResponse(erb -> erb
+                                       .message("Invalid data provided")
+                                       .error(errors.toString())
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.BAD_REQUEST));
+    }
+
+    @ExceptionHandler({NotFoundException.class})
+    public final ResponseEntity<Object> NotFoundExceptionHandler(NotFoundException exception) {
+        return sendResponse(erb -> erb
+                                       .message(exception.getMessage())
+                                       .error("Not Found Exception")
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.NOT_FOUND));
+    }
     @ExceptionHandler({Exception.class})
     public final ResponseEntity<Object> handleGenericExceptionHandler(Exception exception) {
+        exception.printStackTrace();
         return sendResponse(erb -> erb
                                        .message(exception.getMessage())
                                        .error("Generic Exception")

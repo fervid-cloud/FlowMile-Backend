@@ -1,16 +1,10 @@
 package com.mss.polyflow.task_management.dto.response;
 
-import java.sql.Date;
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @NoArgsConstructor
@@ -24,8 +18,8 @@ public class CategoryDetail {
 
     private String description;
 
-    private Date creationTime;
+    private LocalDateTime creationTime;
 
-    private Date modificationTime;
+    private LocalDateTime modificationTime;
 
 }

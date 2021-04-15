@@ -5,6 +5,7 @@ import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendRespo
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
 import com.mss.polyflow.task_management.service.TaskService;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +32,14 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<Object> createTask(@RequestBody CreateTask createTask) {
+    private ResponseEntity<Object> createTask(@RequestBody  @Valid CreateTask createTask) {
         Object createdTask = taskService.createTask(createTask);
         return sendResponse(createdTask, "task created successfully");
     }
 
-    @GetMapping("/all")
-    private ResponseEntity<Object> getAllTasks() {
-        return sendResponse(taskService.getAllTasks(), "tasks fetched successfully");
+    @GetMapping("/all/{categoryId}")
+    private ResponseEntity<Object> getAllTasks(@PathVariable Long categoryId) {
+        return sendResponse(taskService.getAllTasks(categoryId), "tasks fetched successfully");
     }
 
     @RequestMapping(value = "/detail/{taskId}", method = RequestMethod.GET)
@@ -49,7 +50,8 @@ public class TaskController {
 
     @DeleteMapping("/delete/{taskId}")
     private ResponseEntity<Object> deleteCategory(@PathVariable("taskId") Long taskId) {
-        return sendResponse(taskService.deleteTask(taskId), "task deleted successfully");
+        int result = taskService.deleteTask(taskId);
+        return sendResponse(null , result == 0 ? "No such task exists" : "task deleted successfully");
     }
 
 }

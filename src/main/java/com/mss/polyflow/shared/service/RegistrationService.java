@@ -28,7 +28,7 @@ public class RegistrationService {
         User user = User.builder()
                                      .username(userRegistrationDto.getUsername())
                                      .password(hashedPassword)
-                                     .email(userRegistrationDto.getUsername())
+                                     .email(userRegistrationDto.getEmail())
                                      .firstName(userRegistrationDto.getFirstName())
                                      .lastName(userRegistrationDto.getLastName())
                                      .phoneNumber(userRegistrationDto.getPhoneNumber())

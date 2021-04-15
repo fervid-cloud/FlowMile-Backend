@@ -6,6 +6,7 @@ import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendRespo
 import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.service.CategoryService;
+import javax.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/task_manage/category")
-public class CategoriesController {
+public class CategoryController {
 
     private static final Object SUCCESS = 1;
     private final CategoryService categoryService;
 
-    public CategoriesController(
+    public CategoryController(
         CategoryService categoryService) {
         this.categoryService = categoryService;
     }
@@ -37,7 +38,7 @@ public class CategoriesController {
     }
 
     @PostMapping("/create")
-    private ResponseEntity<Object> createCategory(@RequestBody CreateCategory category) {
+    private ResponseEntity<Object> createCategory(@RequestBody @Valid CreateCategory category) {
         Object createdCategory = categoryService.createCategory(category);
         return sendResponse(createdCategory, "category created successfully");
     }
@@ -55,7 +56,8 @@ public class CategoriesController {
 
     @DeleteMapping("/delete/{categoryId}")
     private ResponseEntity<Object> deleteCategory(@PathVariable("categoryId") Long categoryId) {
-        return sendResponse(categoryService.deleteCategory(categoryId), "category deleted successfully");
+        int result = categoryService.deleteCategory(categoryId);
+        return sendResponse(null , result == 0 ? "No such category exists" : "category deleted successfully");
     }
 
 
