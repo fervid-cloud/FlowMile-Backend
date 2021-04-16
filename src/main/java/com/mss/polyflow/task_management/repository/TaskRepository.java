@@ -16,9 +16,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Task findTask( @Param("taskId") Long taskId, @Param("currentUserId") Long currentUserId);
 
 
-//    @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId and ts.category_id = (select ct.id from category as ct where ct.id = ts.category_id and  ct.user_id = : currentUserId)")
-//    List<Task> findAllTasks(Long categoryId, Long currentUserId);
-
     // it is deprecated because it was returning empty list, which is not enough to determine if the categoryId exist for the user or not so basically it is not deprecated for efficiency reason just for user friendly reason
     @Deprecated
     @Query(nativeQuery = true, value = "select ts.* from task as ts join category as ct on ct.id = :categoryId and ct.user_id = :currentUserId")
@@ -33,11 +30,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query(nativeQuery = true, value = "delete from task as ts where ts.id = :taskId and ts.category_id = (select ct.id from category as ct where ct.id = ts.category_id and ct.user_id = :currentUserId)")
     int deleteTask( @Param("taskId") Long taskId,  @Param("currentUserId") Long currentUserId);
 
-    List<Task> findAllByCategoryId(Long categoryId);
-
     @Query(nativeQuery = true, value = "select count(ts.category_id) from task as ts where ts.category_id = :categoryId")
     long countTotalTasks(@Param("categoryId") Long categoryId);
 
-    @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId limit :pageSize offset :offSet")
+    @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId order by ts.creation_time desc limit :pageSize offset :offSet")
     List<Task> findTasks(@Param("categoryId") Long categoryId, @Param("pageSize") Long pageSize, @Param("offSet") Long offSet);
 }

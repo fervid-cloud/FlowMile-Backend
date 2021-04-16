@@ -47,7 +47,7 @@ public class TaskService {
             throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
         }
         List<Task> tasks = taskRepository.findTasks(categoryId, pageSize, offSet);
-        long totalPages = (long) Math.ceil(totalCount/pageSize);
+        long totalPages = (long) Math.ceil((double)totalCount/pageSize);
         return PaginationUtility.toPaginationWrapper(
             pageSize,
             pageNumber,

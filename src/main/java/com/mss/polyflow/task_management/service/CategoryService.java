@@ -43,7 +43,7 @@ public class CategoryService {
             throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
         }
         List<Category> categories = categoryRepository.findCategories(pageSize, offSet, CurrentUserManager.getCurrentUserId());
-        long totalPages = (long) Math.ceil(totalCount/pageSize);
+        long totalPages = (long) Math.ceil((double)totalCount/pageSize);
 
         return PaginationUtility.toPaginationWrapper(
             pageSize,

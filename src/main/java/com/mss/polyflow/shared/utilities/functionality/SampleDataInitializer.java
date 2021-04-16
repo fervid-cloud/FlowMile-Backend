@@ -1,19 +1,22 @@
 package com.mss.polyflow.shared.utilities.functionality;
 
-import com.mss.polyflow.shared.model.User;
-import com.mss.polyflow.shared.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
+import com.mss.polyflow.shared.model.User;
+import com.mss.polyflow.shared.repository.UserRepository;
+import com.mss.polyflow.task_management.model.Category;
+import com.mss.polyflow.task_management.model.Task;
+import com.mss.polyflow.task_management.repository.CategoryRepository;
+import com.mss.polyflow.task_management.repository.TaskRepository;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 
@@ -23,11 +26,21 @@ public class SampleDataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
 
+    private final CategoryRepository categoryRepository;
 
+    private final PasswordEncoder delegatingPasswordEncoder;
+
+    private final TaskRepository taskRepository;
     private final ObjectMapper objectMapper;
     public SampleDataInitializer(UserRepository userRepository,
+        CategoryRepository categoryRepository,
+        PasswordEncoder delegatingPasswordEncoder,
+        TaskRepository taskRepository,
         ObjectMapper objectMapper) {
         this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
+        this.delegatingPasswordEncoder = delegatingPasswordEncoder;
+        this.taskRepository = taskRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -48,17 +61,56 @@ public class SampleDataInitializer implements CommandLineRunner {
 
     private void initializeUsers() {
         int n = 10;
-        for(int i = 1 ; i <= n; ++i) {
-            userRepository.save(User.builder()
-            .userId((long)i)
-            .username("user" + i + "@test.com")
-            .password("user" + i + "123")
-            .email("user" + i + "@test.com")
-            .firstName("firstName" + i)
-            .lastName("lastName" + i)
-            .phoneNumber("123456789" + (i - 1))
-            .build());
+        if(userRepository.findAll().size() == n) {
+            System.out.println("data already exists  -------------------------");
+            return;
         }
+        List<User> users = new ArrayList<>();
+        for(int i = 1 ; i <= n; ++i) {
+            users.add(User.builder()
+                          .userId(0l)
+                          .username("user" + i)
+                          .password(delegatingPasswordEncoder.encode("user" + i))
+                          .email("user" + i + "@test.com")
+                          .firstName("firstName" + i)
+                          .lastName("lastName" + i)
+                          .phoneNumber("123456789" + (i - 1))
+                          .build());
+        }
+        users = userRepository.saveAll(users);
+        initializeCategories(users.get(0).getUserId(), 25);
+        initializeCategories(users.get(1).getUserId(), 34);
+    }
+
+    private void initializeCategories(Long userId, int categorySize) {
+        List<Category> categories = new ArrayList<>();
+
+        for(int i = 1; i <= categorySize; ++i) {
+            categories.add(new Category()
+                               .setName("Category"  + "user - " + userId + " - " + (i))
+                               .setDescription("Category Description " + "user - " + userId + " - " + (i))
+                               .setUserId(userId));
+        }
+
+        categories = categoryRepository.saveAll(categories);
+        for(int i = 0; i < 2; ++i) {
+            initializeTasks(categories.get(i).getId(), userId, 50);
+        }
+    }
+
+    private void initializeTasks(Long categoryId,Long userId, int taskCount) {
+        List<Task> tasks = new ArrayList<>();
+
+        for(int i = 1; i <= taskCount; ++i) {
+            Task currentTasks = new Task()
+                                    .setId(0l)
+                                    .setName("Task" + "user - " + userId + "  category - " + categoryId + " - "  + (i))
+                                    .setDescription("Task Description"  + "user - " + userId + "  category - " + categoryId + " - "  + (i))
+                                    .setCategoryId(categoryId);
+            tasks.add(currentTasks);
+        }
+
+        taskRepository.saveAll(tasks);
     }
 
     private void showData() throws JsonProcessingException {

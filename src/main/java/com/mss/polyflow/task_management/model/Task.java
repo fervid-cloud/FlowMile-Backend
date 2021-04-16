@@ -7,8 +7,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,12 +19,12 @@ import lombok.experimental.Accessors;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-/*
 
-@Table(name = "school_admin", indexes = {
-    @Index(columnList = "school_code", name = "school_code_idx")
+@Table(indexes = {
+    @Index(columnList = "creation_time desc", name = "creation_time_index"),
+    @Index(columnList = "modification_time desc", name = "modification_time_index"),
+    @Index(columnList = "task_status", name = "task_status_index")
 })
-*/
 @Entity
 @Data
 @NoArgsConstructor
@@ -39,7 +41,7 @@ public class Task {
 
     private String description;
 
-    @Column(nullable = false)
+    @Column(name = "task_status", nullable = false)
     private boolean taskStatus = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,10 +53,10 @@ public class Task {
     private Long categoryId;
 
     @CreationTimestamp
-    @Column(nullable = false)
+    @Column(name = "creation_time", nullable = false)
     private LocalDateTime creationTime;
 
     @UpdateTimestamp
-    @Column(nullable = false)
+    @Column(name = "modification_time", nullable = false)
     private LocalDateTime modificationTime;
 }

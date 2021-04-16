@@ -13,8 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    List<Category> findAllByUserId(Long currentUserId);
-
     Optional<Category> findByIdAndUserId(Long categoryId, Long currentUserId);
 
     @Transactional
@@ -25,6 +23,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(nativeQuery = true, value = "select count(ct.id) from category as ct where ct.user_id = :currentUserId")
     long countTotalCategory(@Param("currentUserId") Long currentUserId);
 
-    @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId limit :pageSize offset :offSet")
+    @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId order by ct.creation_time desc limit :pageSize offset :offSet")
     List<Category> findCategories(@Param("pageSize") Long pageSize, @Param("offSet")  Long offSet, @Param("currentUserId")  Long currentUserId);
 }
