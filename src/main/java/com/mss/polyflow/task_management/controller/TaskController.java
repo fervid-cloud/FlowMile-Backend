@@ -3,9 +3,11 @@ package com.mss.polyflow.task_management.controller;
 import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendResponse;
 
 import com.mss.polyflow.shared.exception.MiscellaneousException;
+import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
 import com.mss.polyflow.task_management.service.TaskService;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
+import com.mss.polyflow.task_management.utilities.enum_constants.TaskStatus;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -51,17 +53,34 @@ public class TaskController {
     @GetMapping("/all/{categoryId}")
     private Object getAllTasks (
         @PathVariable @Min(value = 1, message = "invalid categoryId value")  Long categoryId,
+        @RequestParam(value="taskStatus", required = false) String taskStatus,
         @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
         @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
     ) {
         if(categoryId < 1) {
-            throw new MiscellaneousException("Invalid CategoryId provided");
+            throw new NotFoundException("No Such category exists");
         }
+
+
+
+
+        log.info("categoryId  is : {}", categoryId);
+        log.info("taskStatus is : {}", taskStatus);
         log.info("page size is : {}", pageSize);
         log.info("page number is : {}", pageNumber);
-        log.info("categoryId  is : {}", categoryId);
+        TaskStatus currentTaskStatus;
+        if(taskStatus == null) {
+//            taskStatus = TaskStatus.ANY.getValue();
+            currentTaskStatus = TaskStatus.ANY;
+        } else {
+            if (!TaskStatus.isValidTaskStatus(taskStatus)) {
+                throw new NotFoundException("No Such Task type is found");
+            }
+            currentTaskStatus = TaskStatus.valueOf(taskStatus);
+        }
+
         PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-        Object response = taskService.getAllTasks(categoryId, pageSize, pageNumber);
+        Object response = taskService.getAllTasks(categoryId, pageSize, pageNumber, currentTaskStatus);
         return sendResponse(response, "tasks fetched successfully");
 
     }
