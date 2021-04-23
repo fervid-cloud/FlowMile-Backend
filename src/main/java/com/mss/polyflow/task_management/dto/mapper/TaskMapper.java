@@ -13,6 +13,7 @@ public final class TaskMapper {
                    .setName(task.getName())
                    .setDescription(task.getDescription())
                    .setCategoryId(task.getCategoryId())
+                   .setTaskStatus(task.getTaskStatus())
                    .setCreationTime(task.getCreationTime())
                    .setModificationTime(task.getModificationTime());
     }

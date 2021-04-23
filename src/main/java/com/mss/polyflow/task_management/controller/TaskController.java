@@ -5,6 +5,7 @@ import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendRespo
 import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
+import com.mss.polyflow.task_management.dto.request.EditTaskDto;
 import com.mss.polyflow.task_management.service.TaskService;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import com.mss.polyflow.task_management.utilities.enum_constants.TaskStatus;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,8 +44,15 @@ public class TaskController {
 
     @PostMapping("/create")
     private ResponseEntity<Object> createTask(@RequestBody  @Valid CreateTask createTask) {
-        Object createdTask = taskService.createTask(createTask);
-        return sendResponse(createdTask, "task created successfully");
+        Object createdTaskDetail = taskService.createTask(createTask);
+        return sendResponse(createdTaskDetail, "task created successfully");
+    }
+
+
+    @PutMapping("/edit")
+    private ResponseEntity<Object> editTask(@RequestBody  @Valid EditTaskDto editTaskDto) {
+        Object editedTaskDetail = taskService.editTask(editTaskDto);
+        return sendResponse(editedTaskDetail, "task created successfully");
     }
 
 

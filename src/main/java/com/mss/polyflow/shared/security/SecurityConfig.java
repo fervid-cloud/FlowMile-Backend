@@ -96,7 +96,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .authorizeRequests()
-                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "/api/login/**", "/api/register/**"}).permitAll()  // this type of expression(i.e mvcMatcher.(...).permitAll() usually only work at the FilterSecurityInterceptor in FilterChainProxy which is the last filter(which throws the exception if url mvc pattern is not mentioned here) if no filter bean before it has rejected the request yet
+                .mvcMatchers(new String[]{"/**/ping/**", "/h2-console/**", "**/login/**", "/api/register/**"}).permitAll()  // this type of expression(i.e mvcMatcher.(...).permitAll() usually only work at the FilterSecurityInterceptor in FilterChainProxy which is the last filter(which throws the exception if url mvc pattern is not mentioned here) if no filter bean before it has rejected the request yet
             .and()
             .authorizeRequests()
                 .mvcMatchers(new String [] {"/**/api-docs/**", "/**/open_api/**","/open_api.html", "/**/swagger-ui/**", "/swagger-ui.html"}).permitAll()

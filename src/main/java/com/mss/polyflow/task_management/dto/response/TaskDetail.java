@@ -20,6 +20,8 @@ public class TaskDetail {
 
     private Long categoryId;
 
+    private long taskStatus;
+
     private LocalDateTime creationTime;
 
     private LocalDateTime modificationTime;

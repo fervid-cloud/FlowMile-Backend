@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/register")
 public class RegistrationController {
 
-
     private final RegistrationService registrationService;
 
     public RegistrationController(RegistrationService registrationService) {
@@ -33,7 +32,7 @@ public class RegistrationController {
         if(!isValidRequest(user)) {
             throw new InvalidRegistrationRequest();
         }
-        return sendResponse(registrationService.registerNewUser(user));
+        return ResponseModel.sendResponse(registrationService.registerNewUser(user), "Registration successful");
     }
 
 
@@ -53,20 +52,10 @@ public class RegistrationController {
         // if for some reason jwt fails(for example expiration or server issue), that front-link page tells the user that verification has failed,
         // so either he tries to do the verification with the same link after some time or request to generate a new one
         // if he goes for generating a new link, then same cycle will follow
-        return sendResponse(registrationService.verifyCurrentUser(username));
+        return ResponseModel.sendResponse(registrationService.verifyCurrentUser(username), "Verification successful");
     }
 
     //////////////////////////////// UTILITY METHODS
-
-    private ResponseEntity<Object> sendResponse(Object response) {
-        ResponseModel responseModel = ResponseModel.builder()
-                                          .status(1)
-                                          .message("successful")
-                                          .data(response)
-                                          .build();
-
-        return new ResponseEntity<>(responseModel, HttpStatus.OK);
-    }
 
     private boolean isValidRequest(UserRegistrationDto user) {
         return user != null

@@ -1,5 +1,6 @@
 package com.mss.polyflow.task_management.service;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.shared.security.authentication.CurrentUserDetail;
@@ -7,10 +8,12 @@ import com.mss.polyflow.shared.utilities.functionality.CurrentUserManager;
 import com.mss.polyflow.task_management.dto.mapper.CategoryMapper;
 import com.mss.polyflow.task_management.dto.mapper.TaskMapper;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
+import com.mss.polyflow.task_management.dto.request.EditCategoryDto;
 import com.mss.polyflow.task_management.model.Category;
 import com.mss.polyflow.task_management.repository.CategoryRepository;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import java.util.List;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +30,13 @@ public class CategoryService {
 
     @Transactional
     public Object createCategory(CreateCategory createCategory) {
+        /*
+        By default Spring Data JPA inspects the identifier property of the given entity. If the identifier property
+        is null, then the entity will be assumed as new, otherwise as not new.And so if one of your entity has an ID field not null,
+        Spring will make Hibernate do an update (and so a SELECT before).
+        */
         Category category = new Category()
-                                .setId(0l) // for cases if someone from outside the server tries to persist a category of particular id, we dont' want to give outside people the control
+                                .setId(null) // for cases if someone from outside the server tries to persist a category of particular id, we dont' want to give outside people the control
                                 .setName(createCategory.getName())
                                 .setUserId(CurrentUserManager.getCurrentUserId())
                                 .setDescription(createCategory.getDescription());
@@ -67,4 +75,11 @@ public class CategoryService {
     }
 
 
+    public Object editCategory(EditCategoryDto editCategoryDto) {
+
+        Category category = this.categoryRepository.findByIdAndUserId(editCategoryDto.getId(), CurrentUserManager.getCurrentUserId()).orElseThrow(() -> new MiscellaneousException("Invalid edit request, no scuh category exists"));
+
+        BeanUtils.copyProperties(editCategoryDto, category);
+        return CategoryMapper.toCategoryDetail(this.categoryRepository.save(category));
+    }
 }

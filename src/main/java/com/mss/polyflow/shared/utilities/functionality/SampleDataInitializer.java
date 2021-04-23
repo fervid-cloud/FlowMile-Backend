@@ -68,7 +68,7 @@ public class SampleDataInitializer implements CommandLineRunner {
         List<User> users = new ArrayList<>();
         for(int i = 1 ; i <= n; ++i) {
             users.add(User.builder()
-                          .userId(0l)
+                          .userId(null)
                           .username("user" + i)
                           .password(delegatingPasswordEncoder.encode("user" + i))
                           .email("user" + i + "@test.com")
@@ -78,7 +78,7 @@ public class SampleDataInitializer implements CommandLineRunner {
                           .build());
         }
         users = userRepository.saveAll(users);
-        initializeCategories(users.get(0).getUserId(), 25);
+        initializeCategories(users.get(0).getUserId(), 165);
         initializeCategories(users.get(1).getUserId(), 34);
     }
 
@@ -93,8 +93,8 @@ public class SampleDataInitializer implements CommandLineRunner {
         }
 
         categories = categoryRepository.saveAll(categories);
-        for(int i = 0; i < 2; ++i) {
-            initializeTasks(categories.get(i).getId(), userId, 50);
+        for(int i = 0; i < 8; ++i) {
+            initializeTasks(categories.get(i).getId(), userId, 300);
         }
     }
 
@@ -103,7 +103,7 @@ public class SampleDataInitializer implements CommandLineRunner {
 
         for(int i = 1; i <= taskCount; ++i) {
             Task currentTasks = new Task()
-                                    .setId(0l)
+                                    .setId(null)
                                     .setName("Task" + "user - " + userId + "  category - " + categoryId + " - "  + (i))
                                     .setDescription("Task Description"  + "user - " + userId + "  category - " + categoryId + " - "  + (i))
                                     .setCategoryId(categoryId);

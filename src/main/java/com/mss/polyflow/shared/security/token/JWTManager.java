@@ -14,6 +14,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import javax.security.auth.login.CredentialException;
@@ -53,22 +54,25 @@ public class JWTManager {
             ZonedDateTime currentTime = java.time.ZonedDateTime.now();
 
             JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .issuer("mss")
-                .subject(user.getUsername())
-                .issueTime(Date.from(currentTime.toInstant()))
-                .expirationTime(Date.from(currentTime.plusDays(2).toInstant()))
-                .claim("useFor", "testing")
-                .notBeforeTime(Date.from(currentTime.toInstant()))
-//                .jwtID(UUID.randomUUID().toString())  //useful for stateful management
-                .build();
+                                            .issuer("https://server.mss.com")
+                                            .subject(user.getUsername())
+                                            .issueTime(Date.from(currentTime.toInstant()))
+                                            .expirationTime(Date.from(currentTime.plusDays(2).toInstant()))
+                                            .audience("https://client.mss.com")
+                                            .claim("useFor", "hobby project")
+                                            .claim(JWTStandardConstants.AUTH_TIME, Date.from(currentTime.toInstant()))
+                                            .claim(JWTStandardConstants.USERNAME, user.getUsername())
+                                            .notBeforeTime(Date.from(currentTime.toInstant()))
+                                            .build();
+            //                .jwtID(UUID.randomUUID().toString())  //useful for stateful management
 
             JWSSigner macSigner = new MACSigner(jwtSecret);
             JWSAlgorithm algorithm = JWSAlgorithm.HS256;
             JWSHeader jwsHeader = new JWSHeader.Builder(algorithm)
-                .contentType("JSON")
-                .type(new JOSEObjectType("CUSTOM-JWT"))
-                .customParam("customParamForHeader1", "test")
-                .build();
+                                      .contentType("JSON")
+                                      .type(new JOSEObjectType("CUSTOM-JWT"))
+                                      .customParam("customParamForHeader1", "test")
+                                      .build();
 
             SignedJWT signedJWT = new SignedJWT(jwsHeader, jwtClaimsSet);
             signedJWT.sign(macSigner);

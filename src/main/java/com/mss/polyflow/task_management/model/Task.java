@@ -42,7 +42,7 @@ public class Task {
     private String description;
 
     @Column(name = "task_status", nullable = false)
-    private boolean taskStatus = false;
+    private Integer taskStatus = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", updatable = false, insertable = false, nullable = false)
