@@ -6,8 +6,10 @@ import static com.mss.polyflow.shared.utilities.response.ResponseModel.sendRespo
 import com.mss.polyflow.shared.utilities.response.ResponseModel;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.dto.request.EditCategoryDto;
+import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.service.CategoryService;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
+import java.util.Map;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,15 +56,37 @@ public class CategoryController {
         return sendResponse(createdCategory, "category created successfully");
     }
 
-    @GetMapping("/all")
-    private ResponseEntity<Object> getAllCategories(
-        @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
-        @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
-    ) {
+    @GetMapping("/search")
+    private ResponseEntity<Object> filterCategoriesByQueryParameters(
+         @Valid SearchFilterQueryParameterDto searchParams) {
+
+        Long pageSize =  searchParams.getPageSize();
+        Long pageNumber =  searchParams.getPageNumber();
+        log.info("The queryParameter map is : {}", searchParams);
         log.info("page size is : {}", pageSize);
         log.info("page number is : {}", pageNumber);
         PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-        return sendResponse(categoryService.getAllCategories(pageSize, pageNumber), "categories fetched successfully");
+        if(searchParams.getName() != null) {
+            String givenCategoryName = (String) searchParams.getName();
+            log.info("given name is : {}", givenCategoryName);
+            return sendResponse(categoryService.filterAllCategoriesByName(givenCategoryName, pageSize, pageNumber), "categories fetched successfully");
+        } else {
+            return sendResponse(categoryService.getAllCategories(pageSize, pageNumber), "filtered categories fetched successfully");
+        }
+    }
+
+    @GetMapping("/searchFilter")
+    private ResponseEntity<Object> searchFilter(@Valid SearchFilterQueryParameterDto searchParams) {
+
+        Long pageSize =  searchParams.getPageSize();
+        Long pageNumber =  searchParams.getPageNumber();
+        log.info("The queryParameter map is : {}", searchParams);
+        log.info("page size is : {}", pageSize);
+        log.info("page number is : {}", pageNumber);
+        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
+
+        return sendResponse(categoryService.searchFilter(searchParams), "categories fetched successfully");
+
     }
 
     @RequestMapping(value = "/detail/{categoryId}", method = RequestMethod.GET)

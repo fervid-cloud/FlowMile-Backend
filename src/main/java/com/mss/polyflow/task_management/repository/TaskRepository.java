@@ -35,4 +35,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId order by ts.creation_time desc limit :pageSize offset :offSet")
     List<Task> findTasks(@Param("categoryId") Long categoryId, @Param("pageSize") Long pageSize, @Param("offSet") Long offSet);
+
+    @Query(nativeQuery = true, value = "select * from task as ts where ts.category_id = :categoryId and ts.name like '%':givenTaskName'%' order by ts.creation_time desc limit :pageSize offset :offSet")
+    List<Task> filterTasksByName(@Param("categoryId") Long categoryId, @Param("givenTaskName") String givenTaskName, @Param("pageSize") Long pageSize, @Param("offSet") Long offSet);
+
+
 }

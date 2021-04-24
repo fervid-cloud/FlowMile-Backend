@@ -9,6 +9,7 @@ import com.mss.polyflow.task_management.dto.request.EditTaskDto;
 import com.mss.polyflow.task_management.service.TaskService;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import com.mss.polyflow.task_management.utilities.enum_constants.TaskStatus;
+import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -58,20 +59,17 @@ public class TaskController {
 
 
 
-    @Validated
+/*    @Validated
     @GetMapping("/all/{categoryId}")
     private Object getAllTasks (
         @PathVariable @Min(value = 1, message = "invalid categoryId value")  Long categoryId,
-        @RequestParam(value="taskStatus", required = false) String taskStatus,
+        Map<String>
         @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
         @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
     ) {
         if(categoryId < 1) {
             throw new NotFoundException("No Such category exists");
         }
-
-
-
 
         log.info("categoryId  is : {}", categoryId);
         log.info("taskStatus is : {}", taskStatus);
@@ -92,7 +90,30 @@ public class TaskController {
         Object response = taskService.getAllTasks(categoryId, pageSize, pageNumber, currentTaskStatus);
         return sendResponse(response, "tasks fetched successfully");
 
-    }
+    }*/
+
+/*
+    @GetMapping("{categoryId}/search")
+    private ResponseEntity<Object> filterCategoriesByQueryParameters(
+        @PathVariable("categoryId") Long categoryId,
+        @RequestParam Map<String,Object> searchParams) {
+
+
+        Long pageSize = (Long) searchParams.getOrDefault("pageSize", 24);
+        Long pageNumber = (Long) searchParams.getOrDefault("pageNumber", 1);
+
+        log.info("page size is : {}", pageSize);
+        log.info("page number is : {}", pageNumber);
+        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
+        if(searchParams.containsKey("search")) {
+            String givenCategoryName = (String) searchParams.get("search");
+            log.info("given name is : ", givenCategoryName);
+            return sendResponse(taskService.filterTasksByQueryParameter(givenCategoryName, pageSize, pageNumber), "categories fetched successfully");
+        } else {
+            return sendResponse(taskService.getAllTasks(categoryId, pageSize, pageNumber), "filtered categories fetched successfully");
+        }
+    }*/
+
 
     @RequestMapping(value = "/detail/{taskId}", method = RequestMethod.GET)
     private ResponseEntity<Object> getTaskDetail(@PathVariable("taskId") Long taskId) {

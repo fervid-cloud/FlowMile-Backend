@@ -47,7 +47,7 @@ public class TaskService {
         return TaskMapper.toTaskDetail(task);
     }
 
-    public Object getAllTasks(Long categoryId, Long pageSize, Long pageNumber, TaskStatus taskStatus) {
+    public Object getAllTasks(Long categoryId, Long pageSize, Long pageNumber) {
 
         categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
                                 .orElseThrow(() -> new NotFoundException("No Such Category Exists"));
@@ -88,4 +88,5 @@ public class TaskService {
         BeanUtils.copyProperties(editTaskDto, task);
         return TaskMapper.toTaskDetail(taskRepository.save(task));
     }
+
 }

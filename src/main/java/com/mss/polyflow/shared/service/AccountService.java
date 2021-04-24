@@ -81,12 +81,11 @@ public class AccountService {
         user.setFirstName(editUserDetailDto.getFirstName());
         user.setLastName(editUserDetailDto.getLastName());
         user.setPhoneNumber(editUserDetailDto.getPhoneNumber());
-        // send a new id token to the user
         return UserMapper.toUserDetailDto(this.userRepository.save(user));
     }
 
     public Object getUserInfo(String username) {
-        return this.userRepository.findByUsername(username)
-                   .orElseThrow(() -> new MiscellaneousException("No such user exists"));
+        return UserMapper.toUserDetailDto(this.userRepository.findByUsername(username)
+                   .orElseThrow(() -> new MiscellaneousException("No such user exists")));
     }
 }

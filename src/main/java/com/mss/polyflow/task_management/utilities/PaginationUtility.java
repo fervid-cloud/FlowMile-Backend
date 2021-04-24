@@ -1,6 +1,7 @@
 package com.mss.polyflow.task_management.utilities;
 
 import com.mss.polyflow.shared.exception.MiscellaneousException;
+import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -48,13 +49,13 @@ public class PaginationUtility {
     @AllArgsConstructor
     @NoArgsConstructor
     @Accessors(chain = true)
-    static class PaginationWrapper {
+    public static class PaginationWrapper {
 
-        private Long pageNumber;
-        private Object results;
-        private Long totalPages;
-        private Long totalCount;
-        private Long pageSize;
+        private long pageNumber;
+        private Object results = new ArrayList<>();
+        private long totalPages;
+        private long totalCount;
+        private long pageSize;
     }
 
 }

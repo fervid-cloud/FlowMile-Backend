@@ -1,23 +1,24 @@
 package com.mss.polyflow.task_management.service;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.shared.exception.NotFoundException;
-import com.mss.polyflow.shared.security.authentication.CurrentUserDetail;
 import com.mss.polyflow.shared.utilities.functionality.CurrentUserManager;
 import com.mss.polyflow.task_management.dto.mapper.CategoryMapper;
-import com.mss.polyflow.task_management.dto.mapper.TaskMapper;
 import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.dto.request.EditCategoryDto;
+import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.model.Category;
 import com.mss.polyflow.task_management.repository.CategoryRepository;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
+import com.mss.polyflow.task_management.utilities.PaginationUtility.PaginationWrapper;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class CategoryService {
 
@@ -62,6 +63,29 @@ public class CategoryService {
         );
     }
 
+
+    public Object filterAllCategoriesByName(String givenCategoryName,  Long pageSize, Long pageNumber) {
+        long offSet = (pageNumber - 1) * pageSize;
+        long totalCount = categoryRepository.countTotalCategoryForFilter(givenCategoryName, CurrentUserManager.getCurrentUserId());
+        String testQuery = String.format("select count(*) from category as ct where ct.user_id = %s", CurrentUserManager.getCurrentUserId());
+        log.info("The test generated query is : {}", testQuery);
+        List<Category> testCount = new ArrayList<>();
+        System.out.println("It worked , the value is " + testCount.size());
+        if(offSet >= totalCount) {
+            return new PaginationWrapper();
+        }
+        List<Category> categories = categoryRepository.filterCategoriesByName(givenCategoryName, pageSize, offSet, CurrentUserManager.getCurrentUserId());
+        long totalPages = (long) Math.ceil((double)totalCount/pageSize);
+
+        return PaginationUtility.toPaginationWrapper(
+            pageSize,
+            pageNumber,
+            totalPages,
+            totalCount,
+            CategoryMapper.toCategoryDetailList(categories)
+        );
+    }
+
     public Object getCategoryDetail(Long categoryId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
                    .orElseThrow(() -> new NotFoundException("No such category exists"));
@@ -82,4 +106,24 @@ public class CategoryService {
         BeanUtils.copyProperties(editCategoryDto, category);
         return CategoryMapper.toCategoryDetail(this.categoryRepository.save(category));
     }
+
+    public Object searchFilter(SearchFilterQueryParameterDto searchQueryParams) {
+        long totalCount = categoryRepository.countTotalCategoriesByFilter(searchQueryParams, CurrentUserManager.getCurrentUserId());
+        long offSetRequired = (searchQueryParams.getPageNumber() - 1) * searchQueryParams.getPageSize();
+        if(offSetRequired >= totalCount) {
+            return new PaginationWrapper();
+        }
+        List<Category> categories = this.categoryRepository.findTestAllCategoryByFilters(searchQueryParams, CurrentUserManager.getCurrentUserId());
+        long totalPages = (long) Math.ceil((double)totalCount/searchQueryParams.getPageSize());
+
+        return PaginationUtility.toPaginationWrapper(
+            searchQueryParams.getPageSize(),
+            searchQueryParams.getPageNumber(),
+            totalPages,
+            totalCount,
+            CategoryMapper.toCategoryDetailList(categories)
+        );
+    }
+
+
 }

@@ -7,6 +7,9 @@ logging:
       springframework:
         security: TRACE
 #        web: TRACE
+      hibernate:
+#        SQL: TRACE #equivalent to show sql in jpa option enabling both this and that will show log two times so mention only one at a time here
+        type: TRACE
 
 
 ##data_sources

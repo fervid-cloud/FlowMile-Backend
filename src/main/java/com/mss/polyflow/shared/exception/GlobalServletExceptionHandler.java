@@ -7,6 +7,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -89,15 +92,31 @@ public class GlobalServletExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public final ResponseEntity<Object> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
         Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+        BindingResult result = exception.getBindingResult();
+        List<FieldError> fieldErrors = result.getFieldErrors();
+        for (FieldError fieldError : fieldErrors) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
 
         log.info("Invalid data is there -------------------- {}", errors);
         return sendResponse(erb -> erb
                                        .message("Invalid data provided")
+                                       .error(errors.toString())
+                                       .time(getCurrentLocalTime())
+                                       .httpStatus(HttpStatus.BAD_REQUEST));
+    }
+    @ExceptionHandler({BindException.class})
+    public final ResponseEntity<Object> QueryParametersFieldsValidationExceptionHandler(BindException exception) {
+        Map<String, String> errors = new HashMap<>();
+        BindingResult result = exception.getBindingResult();
+        List<FieldError> fieldErrors = result.getFieldErrors();
+        for (FieldError fieldError : fieldErrors) {
+            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
+        log.info("Invalid data is there -------------------- {}", errors);
+        return sendResponse(erb -> erb
+                                       .message("Invalid query search provided")
                                        .error(errors.toString())
                                        .time(getCurrentLocalTime())
                                        .httpStatus(HttpStatus.BAD_REQUEST));
