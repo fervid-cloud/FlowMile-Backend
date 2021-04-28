@@ -1,83 +1,81 @@
-package com.mss.polyflow.task_management.repository;
+package com.mss.polyflow.task_management.repository.task;
 
 import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.model.Category;
+import com.mss.polyflow.task_management.model.Task;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.springframework.security.authentication.BadCredentialsException;
 
-public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
+public class TaskCustomRepositoryImpl implements TaskCustomRepository {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public long countTotalCategoriesByFilter(SearchFilterQueryParameterDto searchQueryParams,
-        Long userId) {
-        if(userId == null) {
-            throw new BadCredentialsException("UnAuthorized user");
-        }
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("select count(*) from category as ct");
-        Map<String, Object> queryParamsTracker = new HashMap<>();
 
-        queryBuilder.append(" where ct.user_id = :userId");
-        queryParamsTracker.put("userId", userId);
+    @Override
+    public long countTotalTasksByFilter(
+        SearchFilterQueryParameterDto searchQueryParams,
+        Long categoryId
+    ) {
 
-        buildRequiredCommonFilteringSortingQuery(true, searchQueryParams, queryBuilder, queryParamsTracker);
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("select count(*) from task as ct");
+            Map<String, Object> queryParamsTracker = new HashMap<>();
 
-        Query createdNamedNativeQuery = entityManager.createNativeQuery(queryBuilder.toString());
+            queryBuilder.append(" where ct.category_id = :categoryId");
+            queryParamsTracker.put("categoryId", categoryId);
 
-        for (Map.Entry<String, Object> entry : queryParamsTracker.entrySet()) {
-            createdNamedNativeQuery.setParameter(entry.getKey(), entry.getValue());
-        }
+            buildRequiredCommonFilteringSortingQuery(true, searchQueryParams, queryBuilder, queryParamsTracker);
 
-        Number resultCount = (Number) createdNamedNativeQuery.getSingleResult();
-        return resultCount.longValue();
+            Query createdNamedNativeQuery = entityManager.createNativeQuery(queryBuilder.toString());
+
+            for (Map.Entry<String, Object> entry : queryParamsTracker.entrySet()) {
+                createdNamedNativeQuery.setParameter(entry.getKey(), entry.getValue());
+            }
+
+            Number resultCount = (Number) createdNamedNativeQuery.getSingleResult();
+            return resultCount.longValue();
     }
 
     @Override
-    public List<Category> findPaginatedTotalFilteredCategories(
+    public List<Task> findPaginatedTotalFilteredTasks(
+        SearchFilterQueryParameterDto searchQueryParams,
+        Long categoryId
+    ) {
 
-        SearchFilterQueryParameterDto searchQueryParams, Long userId) {
-        if(userId == null) {
-            throw new BadCredentialsException("UnAuthorized user");
-        }
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("select * from category as ct");
-        Map<String, Object> queryParamsTracker = new HashMap<>();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("select * from task as ct");
+            Map<String, Object> queryParamsTracker = new HashMap<>();
 
-
-        queryBuilder.append(" ");
-        queryBuilder.append("where ct.user_id = :userId");
-        queryParamsTracker.put("userId", userId);
+            queryBuilder.append(" where ct.category_id = :categoryId");
+            queryParamsTracker.put("categoryId", categoryId);
 
 
-        buildRequiredCommonFilteringSortingQuery(false, searchQueryParams, queryBuilder, queryParamsTracker);
+            buildRequiredCommonFilteringSortingQuery(false, searchQueryParams, queryBuilder, queryParamsTracker);
 
-        long offSet = (searchQueryParams.getPage() - 1) * searchQueryParams.getPageSize();
-        queryBuilder.append(" ");
-        queryBuilder.append("limit :pageSize");
-        queryParamsTracker.put("pageSize", searchQueryParams.getPageSize());
+            long offSet = (searchQueryParams.getPage() - 1) * searchQueryParams.getPageSize();
+            queryBuilder.append(" ");
+            queryBuilder.append("limit :pageSize");
+            queryParamsTracker.put("pageSize", searchQueryParams.getPageSize());
 
-        queryBuilder.append(" ");
-        queryBuilder.append("offset :offSet");
-        queryParamsTracker.put("offSet", offSet);
+            queryBuilder.append(" ");
+            queryBuilder.append("offset :offSet");
+            queryParamsTracker.put("offSet", offSet);
 
-        Query createdNamedNativeQuery = entityManager.createNativeQuery(queryBuilder.toString(),
-            Category.class);
+            Query createdNamedNativeQuery = entityManager.createNativeQuery(queryBuilder.toString(),
+                Task.class);
 
-        for (Map.Entry<String, Object> entry : queryParamsTracker.entrySet()) {
-            createdNamedNativeQuery.setParameter(entry.getKey(), entry.getValue());
-        }
+            for (Map.Entry<String, Object> entry : queryParamsTracker.entrySet()) {
+                createdNamedNativeQuery.setParameter(entry.getKey(), entry.getValue());
+            }
 
-        List<Category> categories = createdNamedNativeQuery.getResultList();
-        return categories;
+            List<Task> tasks = createdNamedNativeQuery.getResultList();
+            return tasks;
     }
-
 
     private void buildRequiredCommonFilteringSortingQuery(boolean countQuery, SearchFilterQueryParameterDto searchQueryParams, StringBuilder queryBuilder, Map<String, Object> queryParamsTracker) {
 
@@ -85,11 +83,11 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
         if(taskType != null && taskType.length() > 0) {
             taskType = taskType.trim().toLowerCase();
 
-           if(taskType.equals("pending") || taskType.equals("done")) {
-               int requiredStatus = (searchQueryParams.getType().equals("pending")) ? 0 : 1;
-               queryBuilder.append(" task_status = :requiredStatus");
-               queryParamsTracker.put("taskStatus", requiredStatus);
-           }
+            if(taskType.equals("pending") || taskType.equals("done")) {
+                int requiredStatus = (searchQueryParams.getType().equals("pending")) ? 0 : 1;
+                queryBuilder.append(" task_status = :requiredStatus");
+                queryParamsTracker.put("taskStatus", requiredStatus);
+            }
         }
 
         String requiredName = searchQueryParams.getName();
@@ -131,11 +129,8 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
 //                queryParamsTracker.put("orderCriteria", orderCriteria);
 //                queryBuilder.append(String.format(" %s", orderingDirection));
 //                queryParamsTracker.put("orderingDirection", orderingDirection);
-
             }
         }
 
-
     }
-
 }

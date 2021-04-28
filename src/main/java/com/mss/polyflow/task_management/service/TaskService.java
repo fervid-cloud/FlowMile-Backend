@@ -6,12 +6,13 @@ import com.mss.polyflow.shared.utilities.functionality.CurrentUserManager;
 import com.mss.polyflow.task_management.dto.mapper.TaskMapper;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
 import com.mss.polyflow.task_management.dto.request.EditTaskDto;
+import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.model.Category;
 import com.mss.polyflow.task_management.model.Task;
-import com.mss.polyflow.task_management.repository.CategoryRepository;
-import com.mss.polyflow.task_management.repository.TaskRepository;
+import com.mss.polyflow.task_management.repository.category.CategoryRepository;
+import com.mss.polyflow.task_management.repository.task.TaskRepository;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
-import com.mss.polyflow.task_management.utilities.enum_constants.TaskStatus;
+import com.mss.polyflow.task_management.utilities.PaginationUtility.PaginationWrapper;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.BeanUtils;
@@ -47,19 +48,24 @@ public class TaskService {
         return TaskMapper.toTaskDetail(task);
     }
 
-    public Object getAllTasks(Long categoryId, Long pageSize, Long pageNumber) {
+    public Object getAllPaginatedFilteredTasks(Long categoryId, SearchFilterQueryParameterDto searchFilterQueryParameterDto) {
+        long pageNumber = searchFilterQueryParameterDto.getPage();
+        long pageSize = searchFilterQueryParameterDto.getPageSize();
+        Long existingCategoryId = categoryRepository.customFindByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId());
 
-        categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
-                                .orElseThrow(() -> new NotFoundException("No Such Category Exists"));
-
-        long offSet = (pageNumber - 1) * pageSize;
-        long totalCount = taskRepository.countTotalTasks(categoryId);
-
-        if(offSet >= totalCount) {
-            throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
+        if(existingCategoryId == null) {
+            return new PaginationWrapper();
         }
 
-        List<Task> tasks = taskRepository.findTasks(categoryId, pageSize, offSet);
+        long offSet = (pageNumber - 1) * pageSize;
+        long totalCount = taskRepository.countTotalTasksByFilter(searchFilterQueryParameterDto, categoryId);
+
+        if(offSet >= totalCount) {
+            return new PaginationWrapper();
+//            throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
+        }
+
+        List<Task> tasks = taskRepository.findPaginatedTotalFilteredTasks(searchFilterQueryParameterDto, categoryId);
         long totalPages = (long) Math.ceil((double)totalCount/pageSize);
         return PaginationUtility.toPaginationWrapper(
             pageSize,

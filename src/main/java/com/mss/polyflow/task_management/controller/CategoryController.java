@@ -56,28 +56,9 @@ public class CategoryController {
         return sendResponse(createdCategory, "category created successfully");
     }
 
-    @GetMapping("/search")
-    private ResponseEntity<Object> filterCategoriesByQueryParameters(
-         @Valid SearchFilterQueryParameterDto searchParams) {
-
-        Long pageSize =  searchParams.getPageSize();
-        Long pageNumber =  searchParams.getPage();
-        log.info("The queryParameter map is : {}", searchParams);
-        log.info("page size is : {}", pageSize);
-        log.info("page number is : {}", pageNumber);
-        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-        if(searchParams.getName() != null) {
-            String givenCategoryName = (String) searchParams.getName();
-            log.info("given name is : {}", givenCategoryName);
-            return sendResponse(categoryService.filterAllCategoriesByName(givenCategoryName, pageSize, pageNumber), "categories fetched successfully");
-        } else {
-            return sendResponse(categoryService.getAllCategories(pageSize, pageNumber), "filtered categories fetched successfully");
-        }
-    }
-
     @GetMapping("/all")
-    private ResponseEntity<Object> searchFilter(@Valid SearchFilterQueryParameterDto searchQueryParams) {
-        return sendResponse(categoryService.getFilteredCategories(searchQueryParams), "categories fetched successfully");
+    private ResponseEntity<Object> getAllPaginatedCategories(@Valid SearchFilterQueryParameterDto searchQueryParams) {
+        return sendResponse(categoryService.getAllPaginatedFilteredCategories(searchQueryParams), "categories fetched successfully");
 
     }
 

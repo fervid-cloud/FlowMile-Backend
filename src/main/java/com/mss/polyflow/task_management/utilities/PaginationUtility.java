@@ -51,11 +51,15 @@ public class PaginationUtility {
     @Accessors(chain = true)
     public static class PaginationWrapper {
 
-        private long pageNumber;
+        private long pageNumber = 1;
         private Object results = new ArrayList<>();
         private long totalPages;
         private long totalCount;
         private long pageSize;
+
+        public PaginationWrapper(long pageNumber) {
+            this.pageNumber = pageNumber;
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.mss.polyflow.task_management.repository;
+package com.mss.polyflow.task_management.repository.category;
 
 import com.mss.polyflow.task_management.model.Category;
 import java.util.List;
@@ -13,7 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> , CategoryCustomRepository {
 
-    Optional<Category> findByIdAndUserId(Long categoryId, Long currentUserId);
+    @Query(nativeQuery = true, value = "select ct.id from category as ct where ct.id = :categoryId && ct.user_id = :currentUserId")
+    Long customFindByIdAndUserId(@Param("categoryId") Long categoryId, @Param("currentUserId") Long currentUserId);
+
+    Optional<Category> findByIdAndUserId( Long categoryId,  Long currentUserId);
 
     @Transactional
     @Modifying

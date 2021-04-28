@@ -8,7 +8,7 @@ import com.mss.polyflow.task_management.dto.request.CreateCategory;
 import com.mss.polyflow.task_management.dto.request.EditCategoryDto;
 import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.model.Category;
-import com.mss.polyflow.task_management.repository.CategoryRepository;
+import com.mss.polyflow.task_management.repository.category.CategoryRepository;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import com.mss.polyflow.task_management.utilities.PaginationUtility.PaginationWrapper;
 import java.util.ArrayList;
@@ -45,46 +45,6 @@ public class CategoryService {
         return CategoryMapper.toCategoryDetail(category);
     }
 
-    public Object getAllCategories(Long pageSize, Long pageNumber) {
-        long offSet = (pageNumber - 1) * pageSize;
-        long totalCount = categoryRepository.countTotalCategory(CurrentUserManager.getCurrentUserId());
-        if(offSet >= totalCount) {
-            throw new MiscellaneousException("Invalid page number, this page number doesn't exists yet");
-        }
-        List<Category> categories = categoryRepository.findCategories(pageSize, offSet, CurrentUserManager.getCurrentUserId());
-        long totalPages = (long) Math.ceil((double)totalCount/pageSize);
-
-        return PaginationUtility.toPaginationWrapper(
-            pageSize,
-            pageNumber,
-            totalPages,
-            totalCount,
-            CategoryMapper.toCategoryDetailList(categories)
-        );
-    }
-
-
-    public Object filterAllCategoriesByName(String givenCategoryName,  Long pageSize, Long pageNumber) {
-        long offSet = (pageNumber - 1) * pageSize;
-        long totalCount = categoryRepository.countTotalCategoryForFilter(givenCategoryName, CurrentUserManager.getCurrentUserId());
-        String testQuery = String.format("select count(*) from category as ct where ct.user_id = %s", CurrentUserManager.getCurrentUserId());
-        log.info("The test generated query is : {}", testQuery);
-        List<Category> testCount = new ArrayList<>();
-        System.out.println("It worked , the value is " + testCount.size());
-        if(offSet >= totalCount) {
-            return new PaginationWrapper();
-        }
-        List<Category> categories = categoryRepository.filterCategoriesByName(givenCategoryName, pageSize, offSet, CurrentUserManager.getCurrentUserId());
-        long totalPages = (long) Math.ceil((double)totalCount/pageSize);
-
-        return PaginationUtility.toPaginationWrapper(
-            pageSize,
-            pageNumber,
-            totalPages,
-            totalCount,
-            CategoryMapper.toCategoryDetailList(categories)
-        );
-    }
 
     public Object getCategoryDetail(Long categoryId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
@@ -107,7 +67,7 @@ public class CategoryService {
         return CategoryMapper.toCategoryDetail(this.categoryRepository.save(category));
     }
 
-    public Object getFilteredCategories(SearchFilterQueryParameterDto searchQueryParams) {
+    public Object getAllPaginatedFilteredCategories(SearchFilterQueryParameterDto searchQueryParams) {
         long totalCount = categoryRepository.countTotalCategoriesByFilter(searchQueryParams, CurrentUserManager.getCurrentUserId());
         long offSetRequired = (searchQueryParams.getPage() - 1) * searchQueryParams.getPageSize();
         if(offSetRequired >= totalCount) {

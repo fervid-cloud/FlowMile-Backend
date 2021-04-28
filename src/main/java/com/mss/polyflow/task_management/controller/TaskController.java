@@ -6,6 +6,7 @@ import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.task_management.dto.request.CreateTask;
 import com.mss.polyflow.task_management.dto.request.EditTaskDto;
+import com.mss.polyflow.task_management.dto.request.SearchFilterQueryParameterDto;
 import com.mss.polyflow.task_management.service.TaskService;
 import com.mss.polyflow.task_management.utilities.PaginationUtility;
 import com.mss.polyflow.task_management.utilities.enum_constants.TaskStatus;
@@ -57,62 +58,13 @@ public class TaskController {
     }
 
 
-
-
-/*    @Validated
-    @GetMapping("/all/{categoryId}")
-    private Object getAllTasks (
-        @PathVariable @Min(value = 1, message = "invalid categoryId value")  Long categoryId,
-        Map<String>
-        @RequestParam(value = "pageSize", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_SIZE_S)  Long pageSize,
-        @RequestParam( value = "pageNumber", required = false, defaultValue = PaginationUtility.DEFAULT_PAGE_NUMBER_S) Long pageNumber
-    ) {
-        if(categoryId < 1) {
-            throw new NotFoundException("No Such category exists");
-        }
-
-        log.info("categoryId  is : {}", categoryId);
-        log.info("taskStatus is : {}", taskStatus);
-        log.info("page size is : {}", pageSize);
-        log.info("page number is : {}", pageNumber);
-        TaskStatus currentTaskStatus;
-        if(taskStatus == null) {
-//            taskStatus = TaskStatus.ANY.getValue();
-            currentTaskStatus = TaskStatus.ANY;
-        } else {
-            if (!TaskStatus.isValidTaskStatus(taskStatus)) {
-                throw new NotFoundException("No Such Task type is found");
-            }
-            currentTaskStatus = TaskStatus.valueOf(taskStatus);
-        }
-
-        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-        Object response = taskService.getAllTasks(categoryId, pageSize, pageNumber, currentTaskStatus);
-        return sendResponse(response, "tasks fetched successfully");
-
-    }*/
-
-/*
-    @GetMapping("{categoryId}/search")
+    @GetMapping("{categoryId}/all")
     private ResponseEntity<Object> filterCategoriesByQueryParameters(
         @PathVariable("categoryId") Long categoryId,
-        @RequestParam Map<String,Object> searchParams) {
-
-
-        Long pageSize = (Long) searchParams.getOrDefault("pageSize", 24);
-        Long pageNumber = (Long) searchParams.getOrDefault("pageNumber", 1);
-
-        log.info("page size is : {}", pageSize);
-        log.info("page number is : {}", pageNumber);
-        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-        if(searchParams.containsKey("search")) {
-            String givenCategoryName = (String) searchParams.get("search");
-            log.info("given name is : ", givenCategoryName);
-            return sendResponse(taskService.filterTasksByQueryParameter(givenCategoryName, pageSize, pageNumber), "categories fetched successfully");
-        } else {
-            return sendResponse(taskService.getAllTasks(categoryId, pageSize, pageNumber), "filtered categories fetched successfully");
-        }
-    }*/
+        @Valid SearchFilterQueryParameterDto searchFilterQueryParameterDto
+    ) {
+        return sendResponse(taskService.getAllPaginatedFilteredTasks(categoryId, searchFilterQueryParameterDto), "filtered categories fetched successfully");
+    }
 
 
     @RequestMapping(value = "/detail/{taskId}", method = RequestMethod.GET)
