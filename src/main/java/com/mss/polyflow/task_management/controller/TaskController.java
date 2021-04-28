@@ -58,7 +58,7 @@ public class TaskController {
     }
 
 
-    @GetMapping("{categoryId}/all")
+    @GetMapping("all/{categoryId}")
     private ResponseEntity<Object> filterCategoriesByQueryParameters(
         @PathVariable("categoryId") Long categoryId,
         @Valid SearchFilterQueryParameterDto searchFilterQueryParameterDto
