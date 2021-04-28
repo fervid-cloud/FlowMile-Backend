@@ -60,11 +60,12 @@ public class SampleDataInitializer implements CommandLineRunner {
 
 
     private void initializeUsers() {
-        int n = 10;
-        if(userRepository.findAll().size() == n) {
+
+        if(userRepository.findAll().size() > 0) {
             System.out.println("data already exists  -------------------------");
             return;
         }
+        int n = 10;
         List<User> users = new ArrayList<>();
         for(int i = 1 ; i <= n; ++i) {
             users.add(User.builder()
@@ -80,6 +81,13 @@ public class SampleDataInitializer implements CommandLineRunner {
         users = userRepository.saveAll(users);
         initializeCategories(users.get(0).getUserId(), 165);
         initializeCategories(users.get(1).getUserId(), 34);
+        userRepository.save(new User()
+                                .setUserId(null)
+                                .setUsername("user01")
+                                .setPassword(delegatingPasswordEncoder.encode("user01"))
+                                .setEmail("test@gmail.com")
+                                .setFirstName("first")
+                                .setLastName("lastname"));
     }
 
     private void initializeCategories(Long userId, int categorySize) {
@@ -107,6 +115,9 @@ public class SampleDataInitializer implements CommandLineRunner {
                                     .setName("Task" + "user - " + userId + "  category - " + categoryId + " - "  + (i))
                                     .setDescription("Task Description"  + "user - " + userId + "  category - " + categoryId + " - "  + (i))
                                     .setCategoryId(categoryId);
+            if(i < taskCount/2) {
+                currentTasks.setTaskStatus(1);
+            }
             tasks.add(currentTasks);
         }
 

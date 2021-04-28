@@ -23,7 +23,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Table(indexes = {
     @Index(columnList = "creation_time desc", name = "creation_time_index"),
     @Index(columnList = "modification_time desc", name = "modification_time_index"),
-    @Index(columnList = "task_status", name = "task_status_index")
+    @Index(columnList = "task_status", name = "task_status_index"),
+    @Index(columnList = "name asc", name = "name_index")
 })
 @Entity
 @Data

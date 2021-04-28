@@ -107,18 +107,18 @@ public class CategoryService {
         return CategoryMapper.toCategoryDetail(this.categoryRepository.save(category));
     }
 
-    public Object searchFilter(SearchFilterQueryParameterDto searchQueryParams) {
+    public Object getFilteredCategories(SearchFilterQueryParameterDto searchQueryParams) {
         long totalCount = categoryRepository.countTotalCategoriesByFilter(searchQueryParams, CurrentUserManager.getCurrentUserId());
-        long offSetRequired = (searchQueryParams.getPageNumber() - 1) * searchQueryParams.getPageSize();
+        long offSetRequired = (searchQueryParams.getPage() - 1) * searchQueryParams.getPageSize();
         if(offSetRequired >= totalCount) {
             return new PaginationWrapper();
         }
-        List<Category> categories = this.categoryRepository.findTestAllCategoryByFilters(searchQueryParams, CurrentUserManager.getCurrentUserId());
+        List<Category> categories = this.categoryRepository.findPaginatedTotalFilteredCategories(searchQueryParams, CurrentUserManager.getCurrentUserId());
         long totalPages = (long) Math.ceil((double)totalCount/searchQueryParams.getPageSize());
 
         return PaginationUtility.toPaginationWrapper(
             searchQueryParams.getPageSize(),
-            searchQueryParams.getPageNumber(),
+            searchQueryParams.getPage(),
             totalPages,
             totalCount,
             CategoryMapper.toCategoryDetailList(categories)

@@ -61,7 +61,7 @@ public class CategoryController {
          @Valid SearchFilterQueryParameterDto searchParams) {
 
         Long pageSize =  searchParams.getPageSize();
-        Long pageNumber =  searchParams.getPageNumber();
+        Long pageNumber =  searchParams.getPage();
         log.info("The queryParameter map is : {}", searchParams);
         log.info("page size is : {}", pageSize);
         log.info("page number is : {}", pageNumber);
@@ -75,17 +75,9 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/searchFilter")
-    private ResponseEntity<Object> searchFilter(@Valid SearchFilterQueryParameterDto searchParams) {
-
-        Long pageSize =  searchParams.getPageSize();
-        Long pageNumber =  searchParams.getPageNumber();
-        log.info("The queryParameter map is : {}", searchParams);
-        log.info("page size is : {}", pageSize);
-        log.info("page number is : {}", pageNumber);
-        PaginationUtility.requiredPageInputValidation(pageSize, pageNumber);
-
-        return sendResponse(categoryService.searchFilter(searchParams), "categories fetched successfully");
+    @GetMapping("/all")
+    private ResponseEntity<Object> searchFilter(@Valid SearchFilterQueryParameterDto searchQueryParams) {
+        return sendResponse(categoryService.getFilteredCategories(searchQueryParams), "categories fetched successfully");
 
     }
 

@@ -20,23 +20,30 @@ public interface CategoryRepository extends JpaRepository<Category, Long> , Cate
     @Query(nativeQuery = true, value = "delete from category as ct where ct.id = :categoryId && ct.user_id = :currentUserId")
     int deleteCategory(@Param("categoryId") Long categoryId, @Param("currentUserId") Long currentUserId);
 
-    @Query(nativeQuery = true, value = "select count(ct.id) from category as ct where ct.user_id = :currentUserId")
-    long countTotalCategory(@Param("currentUserId") Long currentUserId);
 
-    @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId order by ct.creation_time desc limit :pageSize offset :offSet")
-    List<Category> findCategories(@Param("pageSize") Long pageSize, @Param("offSet")  Long offSet, @Param("currentUserId")  Long currentUserId);
+
+
+
+
+
+
 
 
     // this way also works with using like but problematic in using lowercase with hibernate as it gives error in that case
 //    @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId and lower(ct.name) like %:givenCategoryName% order by ct.creation_time desc limit :pageSize offset :offSet")
+    @Deprecated
     @Query(nativeQuery = true, value = "select * from category as ct where ct.user_id = :currentUserId and lower(ct.name) like  lower(concat('%',:givenCategoryName,'%')) order by ct.creation_time desc limit :pageSize offset :offSet")
     List<Category> filterCategoriesByName(@Param("givenCategoryName") String givenCategoryName,  @Param("pageSize") Long pageSize, @Param("offSet")  Long offSet, @Param("currentUserId")  Long currentUserId);
 
 
     //usually categories will be less than tasks so is using concat and lower function , but in case of task, already lowercase letter will be provided to avoid doing all the mentioned operations at database layer
+    @Deprecated
     @Query(nativeQuery = true, value = "select count(ct.id) from category as ct where ct.user_id = :currentUserId and lower(ct.name) like lower(concat('%',:givenCategoryName,'%'))")
     long countTotalCategoryForFilter(@Param("givenCategoryName") String givenCategoryName, @Param("currentUserId") Long currentUserId);
 
+    // basically this doesn't work to avoid sql injection, so whatever value we passed is not treated as some sql statement
+    // but some value and so that is why it doesn't work
+    @Deprecated
     @Query(nativeQuery = true, value = " select * from (:customQuery) as customResult")
     List<Category> countTest(@Param("customQuery") Object customQuery);
 }
