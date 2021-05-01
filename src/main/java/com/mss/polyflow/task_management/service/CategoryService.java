@@ -46,25 +46,20 @@ public class CategoryService {
     }
 
 
-    public Object getCategoryDetail(Long categoryId) {
-        Category category = categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
-                   .orElseThrow(() -> new NotFoundException("No such category exists"));
-        return CategoryMapper.toCategoryDetail(category);
-    }
-
     @Transactional
-    public int deleteCategory(Long categoryId) {
-        // basically if there exist such category for this user, 1 row will be affected, thus returning 1  else 0 row affected, so 0 value will be returned
-        return categoryRepository.deleteCategory(categoryId, CurrentUserManager.getCurrentUserId());
-    }
-
-
     public Object editCategory(EditCategoryDto editCategoryDto) {
 
         Category category = this.categoryRepository.findByIdAndUserId(editCategoryDto.getId(), CurrentUserManager.getCurrentUserId()).orElseThrow(() -> new MiscellaneousException("Invalid edit request, no scuh category exists"));
 
         BeanUtils.copyProperties(editCategoryDto, category);
         return CategoryMapper.toCategoryDetail(this.categoryRepository.save(category));
+    }
+
+
+    public Object getCategoryDetail(Long categoryId) {
+        Category category = categoryRepository.findByIdAndUserId(categoryId, CurrentUserManager.getCurrentUserId())
+                                .orElseThrow(() -> new NotFoundException("No such category exists"));
+        return CategoryMapper.toCategoryDetail(category);
     }
 
     public Object getAllPaginatedFilteredCategories(SearchFilterQueryParameterDto searchQueryParams) {
@@ -83,6 +78,13 @@ public class CategoryService {
             totalCount,
             CategoryMapper.toCategoryDetailList(categories)
         );
+    }
+
+
+    @Transactional
+    public int deleteCategory(Long categoryId) {
+        // basically if there exist such category for this user, 1 row will be affected, thus returning 1  else 0 row affected, so 0 value will be returned
+        return categoryRepository.deleteCategory(categoryId, CurrentUserManager.getCurrentUserId());
     }
 
 

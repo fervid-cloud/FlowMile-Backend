@@ -45,7 +45,7 @@ public class CommonRepositoryUtility {
 
             if(taskType.equals("pending") || taskType.equals("done")) {
                 queryBuilder.append(" and");
-                int requiredStatus = taskType.equals("pending") ? 0 : 1;
+                int requiredStatus = taskType.equals("done") ? 1 : 0;
                 queryBuilder.append(" task_status = :taskStatus");
                 queryParamsTracker.put("taskStatus", requiredStatus);
             }

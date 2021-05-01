@@ -54,7 +54,7 @@ public class TaskController {
     @PutMapping("/edit")
     private ResponseEntity<Object> editTask(@RequestBody  @Valid EditTaskDto editTaskDto) {
         Object editedTaskDetail = taskService.editTask(editTaskDto);
-        return sendResponse(editedTaskDetail, "task created successfully");
+        return sendResponse(editedTaskDetail, "task updated successfully");
     }
 
 

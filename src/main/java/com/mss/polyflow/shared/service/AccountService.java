@@ -3,6 +3,7 @@ package com.mss.polyflow.shared.service;
 import com.mss.polyflow.shared.dto.UserMapper;
 import com.mss.polyflow.shared.dto.request.ChangePasswordRequestDto;
 import com.mss.polyflow.shared.dto.request.EditUserDetailDto;
+import com.mss.polyflow.shared.dto.request.UserRegistrationDto;
 import com.mss.polyflow.shared.dto.response.UserAuthenticatedResponseDto;
 import com.mss.polyflow.shared.dto.response.UserDetailDto;
 import com.mss.polyflow.shared.exception.MiscellaneousException;
@@ -80,12 +81,37 @@ public class AccountService {
 
         user.setFirstName(editUserDetailDto.getFirstName());
         user.setLastName(editUserDetailDto.getLastName());
-        user.setPhoneNumber(editUserDetailDto.getPhoneNumber());
+        //user.setPhoneNumber(editUserDetailDto.getPhoneNumber());
         return UserMapper.toUserDetailDto(this.userRepository.save(user));
     }
 
     public Object getUserInfo(String username) {
         return UserMapper.toUserDetailDto(this.userRepository.findByUsername(username)
                    .orElseThrow(() -> new MiscellaneousException("No such user exists")));
+    }
+
+
+    public Object registerNewUser(UserRegistrationDto userRegistrationDto) {
+
+        String hashedPassword = delegatePasswordEncoder.encode(userRegistrationDto.getPassword());
+        /*
+        By default Spring Data JPA inspects the identifier property of the given entity. If the identifier property
+        is null, then the entity will be assumed as new, otherwise as not new.And so if one of your entity has an ID field not null,
+        Spring will make Hibernate do an update (and so a SELECT before).
+        */
+        User user = User.builder()
+                        .userId(null)
+                        .username(userRegistrationDto.getUsername())
+                        .password(hashedPassword)
+                        .email(userRegistrationDto.getEmail())
+                        .firstName(userRegistrationDto.getFirstName())
+                        .lastName(userRegistrationDto.getLastName())
+                        .phoneNumber(userRegistrationDto.getPhoneNumber())
+                        .isVerified(false)
+                        .isEnabled(true)
+                        .build();
+        user = userRepository.save(user);
+
+        return UserMapper.toUserDetailDto(user);
     }
 }

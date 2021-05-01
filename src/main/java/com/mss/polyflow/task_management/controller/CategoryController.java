@@ -53,7 +53,7 @@ public class CategoryController {
     @PutMapping("/edit")
     private ResponseEntity<Object> editCategory(@RequestBody @Valid EditCategoryDto editCategoryDto) {
         Object createdCategory = categoryService.editCategory(editCategoryDto);
-        return sendResponse(createdCategory, "category created successfully");
+        return sendResponse(createdCategory, "category updated successfully");
     }
 
     @GetMapping("/all")

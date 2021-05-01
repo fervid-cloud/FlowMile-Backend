@@ -21,7 +21,9 @@ public class CategoryCustomRepositoryImpl implements CategoryCustomRepository {
     Map<String, String> fieldColumnsMapping = new HashMap<>();
     {
         fieldColumnsMapping.put("creationTime", "creation_time");
+		fieldColumnsMapping.put("createdTime", "creation_time");
         fieldColumnsMapping.put("modificationTime", "modification_time");
+		fieldColumnsMapping.put("modifiedTime", "modification_time");
         fieldColumnsMapping.put("name", "name");
     }
 

@@ -1,6 +1,5 @@
 package com.mss.polyflow.task_management.service;
 
-import com.mss.polyflow.shared.exception.MiscellaneousException;
 import com.mss.polyflow.shared.exception.NotFoundException;
 import com.mss.polyflow.shared.utilities.functionality.CurrentUserManager;
 import com.mss.polyflow.task_management.dto.mapper.TaskMapper;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TaskService {
@@ -30,6 +30,7 @@ public class TaskService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     public Object createTask(CreateTask createTask) {
         Category category = categoryRepository.findByIdAndUserId(createTask.getCategoryId(), CurrentUserManager.getCurrentUserId())
                                 .orElseThrow(() -> new NotFoundException("No Such Category Exists"));
@@ -47,6 +48,14 @@ public class TaskService {
         task = taskRepository.save(task);
         return TaskMapper.toTaskDetail(task);
     }
+
+
+    public Object getTaskDetail(Long taskId) {
+        Task task = Optional.ofNullable(taskRepository.findTask(taskId, CurrentUserManager.getCurrentUserId()))
+                        .orElseThrow(() -> new NotFoundException("No such task exists"));
+        return TaskMapper.toTaskDetail(task);
+    }
+
 
     public Object getAllPaginatedFilteredTasks(Long categoryId, SearchFilterQueryParameterDto searchFilterQueryParameterDto) {
         long pageNumber = searchFilterQueryParameterDto.getPage();
@@ -77,22 +86,16 @@ public class TaskService {
     }
 
 
-
-    public Object getTaskDetail(Long taskId) {
-        Task task = Optional.ofNullable(taskRepository.findTask(taskId, CurrentUserManager.getCurrentUserId()))
-                   .orElseThrow(() -> new NotFoundException("No such task exists"));
-        return TaskMapper.toTaskDetail(task);
-    }
-
-    public int deleteTask(Long taskId) {
-        return taskRepository.deleteTask(taskId, CurrentUserManager.getCurrentUserId());
-    }
-
+    @Transactional
     public Object editTask(EditTaskDto editTaskDto) {
         Task task = Optional.ofNullable(taskRepository.findTask(editTaskDto.getId(), CurrentUserManager.getCurrentUserId()))
                    .orElseThrow(() -> new NotFoundException("No such task exists"));
         BeanUtils.copyProperties(editTaskDto, task);
         return TaskMapper.toTaskDetail(taskRepository.save(task));
+    }
+
+    public int deleteTask(Long taskId) {
+        return taskRepository.deleteTask(taskId, CurrentUserManager.getCurrentUserId());
     }
 
 }
